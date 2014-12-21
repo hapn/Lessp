@@ -1,9 +1,9 @@
-LessP框架
+Lessp框架
 ==============
 
-Less is More。我们期待通过LessP，做到更多的事情。
+Less is More。我们期待通过Lessp，做到更多的事情。
 
-LessP，是一个基于面向SOA服务的PHP框架。
+Lessp，是一个基于面向SOA服务的Php框架。
 
 特点：
 
