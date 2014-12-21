@@ -77,7 +77,7 @@ class UrlDispatcher
 			$count--;
 		}
 		
-		if ($count > 0 && in_array($pathseg[$count-1],self::$protected)) {
+		if ($count > 0 && in_array($pathseg[$count-1], self::$protected)) {
 			//不允许直接访问的页面
 			throw new \Exception('lessp.u_notfound');
 		}
@@ -114,16 +114,12 @@ class UrlDispatcher
 			}
 		}	
 
-		if (strncmp($func,'_',1) === 0) {
-			// 如果前两位都是下划线，则不允许访问
-			if (substr($func, 1, 1) === '_') {
-				throw new \Exception('lessp.u_notfound');
-			}
-			//意味这个url原来设计为提交数据而用
-			if ($this->app->request->method === 'GET') {
-				//如果请求为GET则出错
-				throw new \Exception('lessp.u_notfound');
-			}
+		// 第一个字符为下划线表明必须要通过 POST/PUT/DELETE 方法访问
+		if ( strncmp($func, '_', 1) === 0
+			&& !in_array($this->app->request->method, array('POST', 'PUT', 'DELETE')) ) 
+		{
+			//如果请求为GET则出错
+			throw new \Exception('lessp.u_notfound');
 		}
 		
 		

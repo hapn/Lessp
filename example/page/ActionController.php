@@ -18,6 +18,6 @@ class ActionController extends Controller
 {
 	function indexAction()
 	{
-		$this->set('hello', 'LessP');
+		$this->set('hello', 'Lessp');
 	}
 }
