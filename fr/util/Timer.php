@@ -16,11 +16,6 @@ final class Timer
 {
 	private $stats = array();
 
-	function __construct()
-	{
-		$this->start = microtime(true);
-	}
-
 	/**
 	 * 开始一个或多个计数器，允许传入多个计数器的名称。
 	 * @example 
