@@ -287,9 +287,9 @@ class WebApp extends \BaseApp {
 		$ip = ($r->userip === $r->clientip) ? $r->userip : ($r->userip . '-' . $r->clientip);
 		
 		$basic = array (
-				'ip' => $ip,
-				'uri' => $this->request->url,
-				'logid' => $this->appId . '-' . ($_LessP_appid - $this->appId) 
+			'ip' => $ip,
+			'uri' => $this->request->url,
+			'logid' => $this->appId . '-' . ($_LessP_appid - $this->appId) 
 		);
 		
 		if ($this->request->method != 'GET') {

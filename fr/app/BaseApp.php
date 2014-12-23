@@ -132,7 +132,7 @@ abstract class BaseApp
 			$this->_initApi();
 		}
 		
-		if (true !== Conf::get('hapn.disable_db')) {
+		if (true !== Conf::get('lessp.disable_db')) {
 			//没有强制关闭
 			$this->_initDB();
 		}

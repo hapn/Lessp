@@ -37,11 +37,23 @@ class UrlDispatcher
 	private $methodExt;
 	
 	//不允许用户直接访问的url
-	static $protected = array('_before', '_after');
+	private static $protected = array('_before', '_after');
+	
+	private static $lastApp;
 
-	function __construct(WebApp $app) 
+	function __construct($app) 
 	{
-		$this->app = $app;
+		if ($app === NULL) {
+			if (!self::$lastApp) {
+				throw new \Exception('urldispatcher.app_required');
+			}
+			$this->app = self::$lastApp;
+		} else {
+			if (!($app instanceof WebApp)) {
+				throw new \Exception('urldispather.app_must_be_WebApp');
+			}
+			self::$lastApp = $this->app = $app;
+		}
 		
 		$this->ctlName = Conf::get('lessp.controlleName', 'ActionController');
 		$this->methodExt = Conf::get('lessp.methodExt', 'Action');

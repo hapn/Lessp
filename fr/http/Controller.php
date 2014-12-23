@@ -113,4 +113,14 @@ abstract class Controller
 	{
 		return $this->response->setView($template, $data);
 	}
+	
+	/**
+	 * 跳转页面请求
+	 * @param string $url
+	 */
+	function forward($url)
+	{
+		$dispatcher = new UrlDispatcher(NULL);
+		$dispatcher->dispatch($url);
+	}
 }
