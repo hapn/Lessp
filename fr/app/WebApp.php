@@ -2,8 +2,8 @@
 
 namespace lessp\fr\app;
 
-use lessp\fr\log\Logger;
-use lessp\fr\conf\Conf;
+use \lessp\fr\log\Logger;
+use \lessp\fr\conf\Conf;
 require_once __DIR__ . '/BaseApp.php';
 
 /**

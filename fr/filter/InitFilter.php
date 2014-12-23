@@ -2,9 +2,9 @@
 
 namespace lessp\fr\filter;
 
-use lessp\fr\util\Encoding;
-use lessp\fr\app\WebApp;
-use lessp\fr\conf\Conf;
+use \lessp\fr\util\Encoding;
+use \lessp\fr\app\WebApp;
+use \lessp\fr\conf\Conf;
 /**
  *  
  * @file        InitFilter.php

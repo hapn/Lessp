@@ -13,7 +13,7 @@ namespace lessp\fr\http;
  * @example     
  */
 
-class Controller
+abstract class Controller
 {
 	/**
 	 * Request
@@ -28,6 +28,23 @@ class Controller
 	var $debug = null;
 	var $encoding = null;
 	
+	/**
+	 * action调用之前调用的方法
+	 * @param string $method
+	 * @param array $args
+	 */
+	function _before($method, $args)
+	{
+		
+	}
+	
+	/**
+	 * action调用之后调用的方法
+	 */
+	function _after()
+	{
+		
+	}
 	
 	/**
 	 * 获取多个请求参数

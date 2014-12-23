@@ -44,7 +44,7 @@ class HttpJsonProxy extends BaseProxy
 	{
 		if ($name == '_fetch') {
 			if (!isset($args[0])) {
-				throw new \Exception('apiproxy.fetch missing fetch url');
+				throw new \Exception('Api.fetch missing fetch url');
 			}
 			$url = $args[0];
 			$input = isset($args[1]) ? $args[1] : array();
@@ -83,6 +83,6 @@ class HttpJsonProxy extends BaseProxy
 			//这时候isset判断会得到false
 			return $ret['data']['rpcret'];
 		}
-		throw new \Exception('apiproxy.httpjson.invalidret '.print_r($ret, true));
+		throw new \Exception('Api.httpjson.invalidret '.print_r($ret, true));
 	}
 }

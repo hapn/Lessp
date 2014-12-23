@@ -9,17 +9,19 @@
  * @description 
  */
 
-use lessp\fr\util\Timer;
-use lessp\fr\log\Logger;
-use lessp\fr\conf\Conf;
-use lessp\fr\api\ApiProxy;
+use \lessp\fr\util\Timer;
+use \lessp\fr\log\Logger;
+use \lessp\fr\conf\Conf;
+use \lessp\fr\api\Api;
+use lessp\fr\db\TxScope;
+use lessp\fr\db\Db;
 
-define('APP_DEBUG_ENABLE', true);
-define('APP_DEBUG_DISABLE', false);
-define('APP_DEBUG_MANUAL', 'manual');
+const APP_DEBUG_ENABLE = true;
+const APP_DEBUG_DISABLE = false;
+const APP_DEBUG_MANUAL = 'manual';
 
-define('APP_MODE_WEB', 'web');
-define('APP_MODE_TOOL', 'tool');
+const APP_MODE_WEB = 'web';
+const APP_MODE_TOOL = 'tool';
 
 abstract class BaseApp
 {
@@ -124,9 +126,15 @@ abstract class BaseApp
 		$this->_initConf();
 		$this->_initEnv();
 		$this->_initLog();
-		if (true !== Conf::get('lessp.disable_apiproxy')) {
+		
+		if (true !== Conf::get('lessp.disable_api')) {
 			//没有强制关闭
-			$this->_initApiProxy();
+			$this->_initApi();
+		}
+		
+		if (true !== Conf::get('hapn.disable_db')) {
+			//没有强制关闭
+			$this->_initDB();
 		}
 	}
 	
@@ -196,6 +204,19 @@ abstract class BaseApp
 	}
 	
 	/**
+	 * 初始化DB
+	 */
+	function _initDB()
+	{
+		require_once FR_ROOT.'db/Db.php';
+		
+		$conf = Conf::get('db.conf');
+		$readonly = Conf::get('db.readonly',false);
+		Db::init($conf);
+		Db::setReadOnly(!!$readonly);
+	}
+	
+	/**
 	 * 生成app的唯一id
 	 * @return int
 	 */
@@ -209,40 +230,41 @@ abstract class BaseApp
 	}
 	
 	/**
-	 * 初始化ApiProxy
+	 * 初始化Api
 	 */
-	function _initApiProxy()
+	function _initApi()
 	{
-		$servers = Conf::get('apiproxy.servers', array());
+		$servers = Conf::get('Api.servers', array());
 		if ($this->debug) {
 			foreach($servers as $key=>$server) {
 				//如果调试模式
 				$servers[$key]['curlopt'][CURLOPT_VERBOSE] = true;
 			}
 		}
-		$modmap = Conf::get('apiproxy.mod', array());
-		$autogen = Conf::get('apiproxy.autodsl_root', array());
+		$modmap = Conf::get('Api.mod', array());
+		$autogen = Conf::get('Api.autodsl_root', array());
 		
-		require_once FR_ROOT.'api/ApiProxy.php';
-		ApiProxy::init(
+		require_once FR_ROOT.'api/Api.php';
+		Api::init(
 			array(
 				'servers'		=> $servers,
 				'mod'			=> $modmap,
 				'encoding'		=> $this->encoding,
 				'autodsl_root'	=> $autogen,
 			), array(
-				'app_root'		=> API_ROOT,
-				'conf_root'		=> CONF_ROOT.'app/',
+				'api_root'		=> API_ROOT,
+				'conf_root'		=> CONF_ROOT.'api/',
+				'api_ns'		=> $this->ns.'api\\',
 			)
 		);
-		$intercepterclasses = Conf::get('apiproxy.intercepters', array());
+		$intercepterclasses = Conf::get('Api.intercepters', array());
 		$intercepters = array();
 		foreach($intercepterclasses as $class) {
 			require_once PLUGIN_ROOT.'intercepters/'.$class.'.php';
 			$class = $this->ns.'intercepter\\'.$class;
 			$intercepters[] = new $class();
 		}
-		ApiProxy::setGlobalIntercepters($intercepters);
+		Api::setGlobalIntercepters($intercepters);
 	}
 	
 	/**
@@ -322,5 +344,12 @@ abstract class BaseApp
 		$str[] = ']';
 		Logger::notice(implode('',$str).' status='.$this->endStatus);
 		Logger::flush();
+		
+		if (true !== Conf::get('lessp.disable_db')) {
+			//做一些清理
+			require_once FR_ROOT.'db/TxScope.php';
+			TxScope::rollbackAll();
+			Db::close();
+		}
 	}
 }

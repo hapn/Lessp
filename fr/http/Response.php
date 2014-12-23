@@ -2,8 +2,8 @@
 
 namespace lessp\fr\http;
 
-use lessp\fr\app\WebApp;
-use lessp\fr\conf\Conf;
+use \lessp\fr\app\WebApp;
+use \lessp\fr\conf\Conf;
 /**
  *  
  * @file        Response.php
@@ -198,22 +198,28 @@ class Response
 	 */
 	function buildView($template, $userData, $output = false)
 	{
-		$engine = Conf::get('lessp.view', 'ZendView');
+		$engine = Conf::get('lessp.view', 'PhpView');
+		$clsName = "\\lessp\\fr\\view\\".$engine;
+		
 		$this->app->timer->begin($engine);
-		if (!class_exists($engine)) {
+		
+		if (!class_exists($clsName)) {
 			$file = FR_ROOT.'view/'.$engine.'.php';
 			require_once $file;
 		}
-		if (!class_exists($engine)) {
+		if (!class_exists($clsName)) {
 			throw new \Exception("lessp.errclass view $engine not exist");
 		}
-		$view = new $engine();
-		$view->init($this->app);
-		$view->setArray($userData);
+		$view = new $clsName();
+		$view->init(array(
+			'viewNs' 	=> $this->app->ns,
+			'request' 	=> $this->app->request,
+		));
+		$view->sets($userData);
 		if (!$output) {
-			$result = $view->build($template);
+			$result = $view->fetch($template);
 		} else {
-			$result = $view->display($template);
+			$result = $view->render($template);
 		}
 		$this->app->timer->end($engine);
 		return $result;

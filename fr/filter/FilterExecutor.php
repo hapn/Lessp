@@ -1,8 +1,8 @@
 <?php
 
 namespace lessp\fr\filter;
-use lessp\fr\app\WebApp;
-use lessp\fr\log\Logger;
+use \lessp\fr\app\WebApp;
+use \lessp\fr\log\Logger;
 
 /**
  * 
@@ -60,13 +60,13 @@ class FilterExecutor
 						throw new \Exception('lessp.errclass '.$classname);
 					}
 					require_once PLUGIN_ROOT.'filter/'.$classname.'.php';
-					$classname = $this->app->ns.$classname;
+					$classname = $this->app->ns.'filter\\'.$classname;
 				} else {
 					require_once FR_ROOT.'filter/'.$classname.'.php';
 					$classname = '\\lessp\\fr\\filter\\'.$classname;
 				}
 				if (!class_exists($classname)) {
-					throw new \Exception('lessp.errclass');
+					throw new \Exception('lessp.errclass class='.$classname);
 				}
 				Logger::debug('load filter %s.%s', $key, $classname);
 				$this->impFilters[$key][] = new $classname();

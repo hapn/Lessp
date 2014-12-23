@@ -12,12 +12,12 @@ final class LogArgumentIntercepter implements IIntercepter
 {
     function before(IProxy $proxy,$name,$args)
     {   
-        Logger::trace('apiproxy call:%s->%s args:%s',$proxy->getMod(),$name,serialize($args));
+        Logger::trace('Api call:%s->%s args:%s',$proxy->getMod(),$name,serialize($args));
     }   
 
     function after(IProxy $proxy,$name,$args,$ret)
     {   
-        Logger::trace('apiproxy call:%s->%s ret:%s',$proxy->getMod(), $name, serialize($ret));
+        Logger::trace('Api call:%s->%s ret:%s',$proxy->getMod(), $name, serialize($ret));
     }   
 
     function exception(IProxy $proxy,$name,$args)
@@ -55,7 +55,7 @@ interface IIntercepter
 
 /**
  * 代理类的抽象接口
- * @package lib\apiproxy
+ * @package lib\Api
  */
 interface IProxy
 {

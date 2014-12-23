@@ -2,9 +2,10 @@
 
 namespace lessp\fr\api;
 
+use nhap\fr\api\PHPProxy;
 /**
  *  
- * @file        ApiProxy.php
+ * @file        Api.php
  * @author      ronnie<comdeng@live.com>
  * @date        2014-12-21
  * @version     1.0
@@ -13,13 +14,16 @@ namespace lessp\fr\api;
  * @example     
  */
 
-class ApiProxy
+class Api
 {
 	private $caller = null;
 	private static $proxies = array();
 	private static $configure = array();
-	private static $apppath = '';
+	
+	private static $apipath = '';
 	private static $confpath = '';
+	private static $apins = '';
+	
 	private $intercepters = array();
 	private static $globalIntercepters = array();
 	private static $gendata = false;
@@ -45,11 +49,11 @@ class ApiProxy
 	 * )</code>
 	 * @param array $pathroot
 	 * <code>array(
-	 * 	'app_root' 	=>  , // app模块的根目录
+	 * 	'api_root' 	=>  , // app模块的根目录
 	 *  'conf_root' =>  , // 配置文件的根目录
 	 * )</code>
 	 */
-	static function init($conf,$pathroot)
+	static function init($conf, $pathroot)
 	{
 		$mods = $conf['mod'];
 		$servers = $conf['servers'];
@@ -69,8 +73,9 @@ class ApiProxy
 			self::$encoding = str_replace('-', '', $encoding);
 		}
 
-		self::$apppath = $pathroot['app_root'];
+		self::$apipath = $pathroot['api_root'];
 		self::$confpath = $pathroot['conf_root'];
+		self::$apins = $pathroot['api_ns'];
 	}
 
 	/**
@@ -90,7 +95,7 @@ class ApiProxy
 	 * 获取模块
 	 * @param string $mod 模块名
 	 * @param array $param 初始化参数
-	 * @return ApiProxy
+	 * @return Api
 	 */
 	static function get($mod, $param=array())
 	{
@@ -101,17 +106,19 @@ class ApiProxy
 		} else {
 			if (!($proxy = self::getProxyFromConf($mod, $param)) ) {
 				//默认按照php来实现
+				require_once __DIR__.'/PHPProxy.php';
 				$proxy = new PHPProxy($mod);
 				$proxy->init(array(
 					'conf_path'	=> self::$confpath,
-					'app_path'	=> self::$apppath
+					'api_path'	=> self::$apipath,
+					'api_ns'	=> self::$apins,
 				),$param);
 			}
 			if ($proxy->cacheable()) {
 				self::registerProxy($proxy);
 			}
 		}
-		$api = new ApiProxy($proxy);
+		$api = new Api($proxy);
 		foreach(self::$globalIntercepters as $intercepter) {
 			$api->addIntercepter($intercepter);
 		}
@@ -132,7 +139,7 @@ class ApiProxy
 		}
 		$conf = self::$configure[$mod];
 		if (empty($conf['class'])) {
-			throw new \Exception('apiproxy.errconf mod='.$mod);
+			throw new \Exception('Api.errconf mod='.$mod);
 		}
 		$internalmod = $mod;
 		if (!empty($conf['mod'])) {
@@ -200,8 +207,8 @@ class ApiProxy
 	 */
 	function enableTransaction()
 	{
-		require_once __DIR__.'/TrxIntercepter.php';
-		$this->addIntercepter(new TrxIntercepter());
+		require_once FR_ROOT.'db/TxIntercepter.php';
+		$this->addIntercepter(new TxIntercepter());
 	}
 
 	/**

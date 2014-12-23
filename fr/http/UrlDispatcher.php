@@ -4,9 +4,9 @@ namespace lessp\fr\http;
 
 require_once __DIR__.'/Controller.php';
 
-use lessp\fr\app\WebApp;
-use lessp\fr\conf\Conf;
-use lessp\fr\log\Logger;
+use \lessp\fr\app\WebApp;
+use \lessp\fr\conf\Conf;
+use \lessp\fr\log\Logger;
 /**
  *  
  * @file        UrlDispatcher.php
@@ -81,10 +81,9 @@ class UrlDispatcher
 			//不允许直接访问的页面
 			throw new \Exception('lessp.u_notfound');
 		}
-		$fullpath = rtrim(PAGE_ROOT.implode('/',$pathseg),'/');
+		$fullpath = rtrim(PAGE_ROOT.implode('/', $pathseg),'/');
 		$userfunc = '';
 		$ctlName = $this->ctlName.'.php';
-		$ctlNs = $this->app->ns.'page';
 		
 		if (is_readable($fullpath.'/'.$ctlName)) {
 			$path = $fullpath.'/'.$ctlName;
@@ -92,13 +91,24 @@ class UrlDispatcher
 			if (empty($args)) {
 				$args[] = '';
 			}
+			$nsseg = array_diff($pathseg, array(''));
+			if (empty($nsseg)) {
+				$ctlNs = $this->app->ns.'page\\';
+			} else {
+				$ctlNs = $this->app->ns.'page\\'.implode('\\', $nsseg).'\\';
+			}
 		} elseif (is_readable($fullpath.'/index/'.$ctlName)) {
 			$path = $fullpath.'/index/'.$ctlName;
 			$func = 'index';
 			if (empty($args)) {
 				$args[] = '';
 			}
-			$ctlNs .= 'index\\';
+			$nsseg = array_diff($pathseg, array(''));
+			if (empty($nsseg)) {
+				$ctlNs = $this->app->ns.'page\\index\\';
+			} else {
+				$ctlNs = $this->app->ns.'page\\'.implode('\\', $nsseg).'\\index\\';
+			}
 		} else {
 			if ($count > 0) {
 				//至少有一级
@@ -107,10 +117,17 @@ class UrlDispatcher
 				$func = $pathseg[$count-1];
 				$userfunc = $func;
 				
-				$ctlNs .= implode('\\', $rootseg);
+				$nsseg = array_diff($rootseg, array(''));
+				if (empty($nsseg)) {
+					$ctlNs = $this->app->ns.'page\\';
+				} else {
+					$ctlNs = $this->app->ns.'page\\'.implode('\\', $nsseg).'\\';
+				}
 			} else {
 				$path = rtrim(PAGE_ROOT, '/').'/'.$ctlName;
 				$func = 'index';
+				
+				$ctlNs = $this->app->ns.'page\\';
 			}
 		}	
 
@@ -123,11 +140,12 @@ class UrlDispatcher
 		}
 		
 		
-		$className = $ctlNs.'\\'.$this->ctlName;
+		$className = $ctlNs.$this->ctlName;
+		
 		if (is_readable($path)) {
 			require_once $path;
 			if (!class_exists($className)) {
-				throw new \Exception('lessp.u_notfound');
+				throw new \Exception('lessp.u_notfound class='.$className);
 			}
 		} else {
 			throw new \Exception('lessp.u_notfound');
@@ -158,7 +176,7 @@ class UrlDispatcher
 					throw new \Exception('lessp.u_notfound');
 				}
 			} else {
-				throw new \Exception('lessp.u_notfound');
+				throw new \Exception('lessp.u_notfound func='.$func.$this->methodExt);
 			}
 		}
 		

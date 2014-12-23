@@ -2,9 +2,9 @@
 
 namespace lessp\fr\filter;
 
-use lessp\fr\app\WebApp;
-use lessp\fr\http\UrlDispatcher;
-use lessp\fr\log\Logger;
+use \lessp\fr\app\WebApp;
+use \lessp\fr\http\UrlDispatcher;
+use \lessp\fr\log\Logger;
 /**
  *  
  * @file        UrlFilter.php

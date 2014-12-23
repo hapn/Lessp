@@ -1,5 +1,5 @@
 <?php
-use lessp\fr\conf\Conf;
+use \lessp\fr\conf\Conf;
 /**
  *  
  * @file        lessp.conf.php

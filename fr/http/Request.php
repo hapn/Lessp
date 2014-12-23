@@ -2,7 +2,7 @@
 
 namespace lessp\fr\http;
 
-use lessp\fr\app\WebApp;
+use \lessp\fr\app\WebApp;
 /**
  *  
  * @file        Request.php

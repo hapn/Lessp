@@ -2,7 +2,7 @@
 
 namespace lessp\fr\filter;
 
-use lessp\fr\app\WebApp;
+use \lessp\fr\app\WebApp;
 /**
  *  
  * @file        PrivateUrlFilter.php

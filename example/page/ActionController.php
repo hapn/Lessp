@@ -2,7 +2,7 @@
 
 namespace com\demo\page;
 
-use lessp\fr\http\Controller;
+use \lessp\fr\http\Controller;
 /**
  *  
  * @file        ActionController.php

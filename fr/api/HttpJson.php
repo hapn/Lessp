@@ -186,7 +186,7 @@ class HttpJson
 		$json = json_encode ( $arr_data, JSON_UNESCAPED_UNICODE );
 		if (empty ( $json ))
 		{
-			throw new \Exception ( 'apiproxy.httpjson encode failed' );
+			throw new \Exception ( 'Api.httpjson encode failed' );
 		}
 		curl_setopt ( $this->curl_handle, CURLOPT_CONNECTTIMEOUT, $this->connTimeout);
 		curl_setopt ( $this->curl_handle, CURLOPT_TIMEOUT, $this->connTimeout+$this->readTimeout + $this->writeTimeout);
@@ -196,7 +196,7 @@ class HttpJson
 			$url = $this->pickOneUrl ();
 			if (false === $url)
 			{
-				throw new \Exception ( 'apiproxy.httpjson call all url failed' );
+				throw new \Exception ( 'Api.httpjson call all url failed' );
 			}
 				
 			curl_setopt ( $this->curl_handle, CURLOPT_URL, $url );
@@ -227,7 +227,7 @@ class HttpJson
 	protected function convertEncoding($arr_data, $from, $to, $step=1)
 	{
 		if ($step > self::MAX_STEP) {
-			throw new \Exception('apiproxy.recursion');
+			throw new \Exception('Api.recursion');
 		}
 		if (is_string ( $arr_data ))
 		{
@@ -295,7 +295,7 @@ class HttpJson
 		$arrRet = json_decode ( $this->rawResponseBody, true );
 		if (false === $arrRet)
 		{
-			throw new \Exception ( "apiproxy.httpjson json_decode:$this->rawResponseBody failed" );
+			throw new \Exception ( "Api.httpjson json_decode:$this->rawResponseBody failed" );
 		}
 		if ($this->encoding !== 'UTF-8')
 		{
@@ -339,7 +339,7 @@ class HttpJson
 			if (0 !== $errno)
 			{
 				$error = curl_error ( $this->curl_handle );
-				throw new \Exception ( "apiproxy.httpjson curl_error:$error" );
+				throw new \Exception ( "Api.httpjson curl_error:$error" );
 			}
 		}
 	}
