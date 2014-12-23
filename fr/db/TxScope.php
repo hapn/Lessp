@@ -2,7 +2,7 @@
 
 namespace lessp\fr\db;
 
-use lessp;
+require_once __DIR__.'/Db.php';
 /**
 *   @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
 *   @file			TxScope.php

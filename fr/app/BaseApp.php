@@ -191,12 +191,12 @@ abstract class BaseApp
 		require_once FR_ROOT.'log/Log.php';
 		
 		$logFile = Conf::get('lessp.log.file', 'LessP');
-		$logLevel = Conf::get('lessp.log.level', $this->debug ? LOG_LEVEL_DEBUG : LOG_LEVEL_TRACE);
+		$logLevel = Conf::get('lessp.log.level', $this->debug ? \lessp\fr\log\LOG_LEVEL_DEBUG : \lessp\fr\log\LOG_LEVEL_TRACE);
 		if ($this->debug === APP_DEBUG_ENABLE) {
 			//DEBUG模式下log级别直接为debug
-			$logLevel = LOG_LEVEL_DEBUG;
+			$logLevel = \lessp\fr\log\LOG_LEVEL_DEBUG;
 		}
-		$roll = Conf::get('lessp.log.roll', LOG_ROLLING_NONE);
+		$roll = Conf::get('lessp.log.roll', \lessp\fr\log\LOG_ROLLING_NONE);
 		Logger::init(LOG_ROOT, $logFile, $logLevel, array(), $roll);
 	
 		$basic = array('logid' => $this->appId);

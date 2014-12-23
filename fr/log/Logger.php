@@ -15,17 +15,17 @@ namespace lessp\fr\log;
 $__log = null;
 
 //逻辑日志级别
-define('LOG_LEVEL_FATAL', 1);
-define('LOG_LEVEL_WARNING', 2);
-define('LOG_LEVEL_NOTICE', 4);
-define('LOG_LEVEL_TRACE', 8);
-define('LOG_LEVEL_DEBUG', 16);
+const LOG_LEVEL_FATAL 	= 1;
+const LOG_LEVEL_WARNING = 2;
+const LOG_LEVEL_NOTICE 	= 4;
+const LOG_LEVEL_TRACE 	= 8;
+const LOG_LEVEL_DEBUG 	= 16;
 
 // 日志切分方式
-define('LOG_ROLLING_NONE', 0);
-define('LOG_ROLLING_HOUR', 1);
-define('LOG_ROLLING_DAY', 2);
-define('LOG_ROLLING_MONTH', 3);
+const LOG_ROLLING_NONE 	= 0;
+const LOG_ROLLING_HOUR 	= 1;
+const LOG_ROLLING_DAY 	= 2;
+const LOG_ROLLING_MONTH = 3;
 
 $__log = null;
 
