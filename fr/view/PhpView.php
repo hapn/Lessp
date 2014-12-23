@@ -20,7 +20,6 @@ require_once __DIR__.'/Helper.php';
 final class PhpView implements IView
 {
 	private $_v = array();
-	private $_pv = array();
 	
 	/**
 	 * 请求
@@ -36,10 +35,10 @@ final class PhpView implements IView
 	private $tplExt;
 	
 	/**
-	 * 是否处于partial模式
-	 * @var boolean
+	 * partial的级别，为0表示最外层的view
+	 * @var int
 	 */
-	private $isPartial = FALSE;
+	private $partialLevel = 0;
 	
 	/**
 	 * 命名空间
@@ -74,18 +73,11 @@ final class PhpView implements IView
 	 */
 	function sets(array $arr)
 	{
-		if ($this->isPartial) {
-			if ($this->_pv) {
-				$this->_pv = array_merge($this->_pv, $arr);
-			} else {
-				$this->_pv = $arr;
-			}
-			return;
-		}
-		if ($this->_v) {
-			$this->_v = array_merge($this->_v, $arr);
+		$level = $this->partialLevel;
+		if (isset($this->_v[$level])) {
+			$this->_v[$level] = array_merge($this->_v[$level], $arr);
 		} else {
-			$this->_v = $arr;
+			$this->_v[$level] = $arr;
 		}
 	}
 	
@@ -95,10 +87,7 @@ final class PhpView implements IView
 	 */
 	function set($key, $value)
 	{
-		if ($this->isPartial) {
-			$this->_pv[$key] = $value;
-		}
-		$this->_v[$key] = $value;
+		$this->_v[$this->partialLevel][$key] = $value;
 	}
 	
 	/**
@@ -108,7 +97,6 @@ final class PhpView implements IView
 	function clear()
 	{
 		$this->_v = array();
-		$this->_pv = array();
 	}
 	
 	/**
@@ -118,12 +106,12 @@ final class PhpView implements IView
 	 */
 	function __get($name)
 	{
-		if ($this->isPartial) {
-			if (array_key_exists($name, $this->_pv)) {
-				return $this->$name = $this->_pv[$name];
+		for($i = $this->partialLevel; $i >= max($i - 1, 0); $i--) {
+			if (array_key_exists($name, $this->_v[$i])) {
+				return $this->$name = $this->_v[$i][$name];
 			}
 		}
-		return $this->$name = (array_key_exists($name, $this->_v) ? $this->_v[$name] : NULL);
+		return NULL;
 	}
 	
 	/**
@@ -159,7 +147,11 @@ final class PhpView implements IView
 	
 	private function enterPartialStatus()
 	{
-		$this->isPartial = true;
+		$this->partialLevel++;
+		
+		if ($this->partialLevel > 2) {
+			throw new \Exception('phpview.partialLevelTooBig');
+		}
 	}
 	
 	/**
@@ -167,13 +159,14 @@ final class PhpView implements IView
 	 */
 	private function leavePartialStatus()
 	{
-		$this->isPartial = false;
-		
-		foreach($this->_pv as $key => $value) {
-			unset($this->$key);
+		if (isset($this->_v[$this->partialLevel])) {	
+			foreach($this->_v[$this->partialLevel] as $key => $value) {
+				unset($this->$key);
+			}
+
+			unset($this->_v[$this->partialLevel]);
 		}
-		
-		$this->_pv = array();
+		$this->partialLevel--;
 	}
 	
 	
@@ -238,7 +231,7 @@ final class PhpView implements IView
 	 * 
 	 * @return string
 	 */
-	private function _partial($path, array $args)
+	private function _partial($path)
 	{
 		$arr = explode('/', trim($path, '/'));
 		if (count($arr) < 2) {
@@ -264,7 +257,7 @@ final class PhpView implements IView
 			throw new \Exception('zendview.methodNotFound method='.$methodName);
 		}
 		$ctl->view = $this;
-		return call_user_func(array($ctl, $methodName), $args);
+		return call_user_func(array($ctl, $methodName));
 	}
 	
 	

@@ -18,7 +18,7 @@ class ActionController extends Controller
 {
 	function indexAction()
 	{
-		$this->set('hello', 'Lessp');
+		$this->set('hello1', 'Lessp');
 		
 		$this->forward('/foo/bar');
 	}
