@@ -31,7 +31,7 @@ abstract class BaseApp
 	 * false: 不允许调试
 	 * true： 允许调试
 	 * munual： 手动，通过传入_d参数启动
-	 * @var int
+	 * @var boolean|string
 	 */
 	public $debug;
 	

@@ -2,9 +2,8 @@
 
 namespace nhap\fr\api;
 
-require_once __DIR__.'/BaseProxy.php';
-use lessp\fr\api\BaseProxy;
 use lessp\fr\conf\Conf;
+use lessp\fr\api\BaseProxy;
 /**
  *  
  * @file        PhpProxy.php
@@ -16,15 +15,18 @@ use lessp\fr\conf\Conf;
  * @example     
  */
 
+require_once __DIR__.'/BaseProxy.php';
+
 class PHPProxy extends BaseProxy
 {
 	private $srcCaller = null;
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\BaseProxy::init()
-	 */
-	function init($conf, $params)
+
+	function __construct($mod)
+	{
+		parent::__construct($mod);
+	}
+
+	function init($conf,$params)
 	{
 		$confroot = $conf['conf_path'];
 		$apiroot = $conf['api_path'];
@@ -33,19 +35,17 @@ class PHPProxy extends BaseProxy
 		$mod = $this->getMod();
 		//支持多级的子模块
 		$modseg = explode('/', $mod);
-		$nsprefix = implode('\\', $modseg);
 		//自动加载app mod conf
 		Conf::load($confroot.$modseg[0].'.conf.php');
-		$modseg =  array_map('ucfirst',$modseg);
-		//类名以每一级单词大写开始
-		$class = implode('', $modseg).'Export';
-		$path = $apiroot.$mod.'/'.$modseg[count($modseg)-1].'Export.php';
-		require_once $path;
 		
-		$class = $apins.$nsprefix.'\\'.$class;
+		$class = $apins.implode('\\', $modseg).'\\'. $modseg[count($modseg) - 1]. 'Export';
+		
+		//类名以每一级单词大写开始
+		$path = $apiroot.$mod.'/'.ucfirst($modseg[count($modseg)-1]).'Export.php';
+		require_once $path;
 		$this->srcCaller = new $class($params);
 	}
-	
+
 	function call($name,$args)
 	{
 		$ret = call_user_func_array(array($this->srcCaller,$name),$args);
