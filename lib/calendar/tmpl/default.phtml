@@ -1,0 +1,184 @@
+<?php if (empty($this->conf['isAjax'])):?>
+<style>
+	.table tr td{cursor:pointer;border:solid 1px transparent;}	
+	.table tr td:hover{border-color:#CCC;background:#DFD;}	
+	.table tr td.on{border-color:#CCC;background:#CFC;}
+	.table tr td.text-danger{color:#F22;}
+	.table tr td.bg-danger{background-color:#FFA;}
+</style>
+
+<div class="_lessp_calendar_container">
+<?php endif?>
+	<div class="row" style="margin-bottom:20px">
+		<div class="col-md-2"></div>
+		
+		<?php 
+			$changeUrl = $this->conf['changeUrl'];
+			$dayUrl = isset($this->conf['dayUrl']) ? $this->conf['dayUrl'] : '';
+			
+			$prevMonth = $this->month - 1;
+			if ($prevMonth < 1) {
+				$prevMonth = 12;
+				$prevYear = $this->year - 1;
+			} else {
+				$prevYear = $this->year;
+			}
+			
+			$prevMonthUrl = preg_replace(array('#{year}#', '#{month}#'), array($prevYear, $prevMonth), $changeUrl);
+			
+			$nextMonth = $this->month + 1;
+			if ($nextMonth > 12) {
+				$nextMonth = 1;
+				$nextYear = $this->year + 1;
+			} else {
+				$nextYear = $this->year;
+			}
+			
+			
+			$nextMonthUrl = preg_replace(array('#{year}#', '#{month}#'), array($nextYear, $nextMonth), $changeUrl);
+			
+			$prevYearUrl = preg_replace(array('#{year}#', '#{month}#'), array($this->year - 1, $nextMonth), $changeUrl);
+			$nextYearUrl = preg_replace(array('#{year}#', '#{month}#'), array($this->year + 1, $nextMonth), $changeUrl);
+		?>
+		<div class="col-md-3 text-center">
+			<div class="btn-group">
+				<a href="<?=$prevYearUrl?>" class="btn btn-default"><span class="glyphicon glyphicon-fast-backward text-primary"></span> 上一年</a>
+				<a href="<?=$prevMonthUrl?>" class="btn btn-default"><span class="glyphicon glyphicon-step-backward text-primary"></span> 上一月</a>
+			</div>
+		</div>
+		<div class="col-md-2 text-center">
+			<h4><?=$this->year?>年<?=$this->month?>月</h4>
+		</div>
+		<div class="col-md-3 text-center">
+			<div class="btn-group">
+				<a href="<?=$nextMonthUrl?>" class="btn btn-default"><span class="glyphicon glyphicon-step-forward text-primary"></span> 下一月</a>
+				<a href="<?=$nextYearUrl?>" class="btn btn-default"><span class="glyphicon glyphicon-fast-forward text-primary"></span> 下一年</a>
+			</div>
+		</div>
+		<div class="col-md-2"></div>
+	</div>
+	<table class="table table-striped table-condensed">
+			<tr>
+			<?php foreach($this->weekdays as $wd):?>
+				<th class="text-center">
+					<?=$wd?>
+				</th>
+			<?php endforeach?>
+			</tr>
+		<?php foreach($this->grids as $grid):?>
+			<tr>
+			<?php foreach($grid['list'] as $wd => $day):
+				if ($dayUrl) {
+					$thisDayUrl = preg_replace(array(
+						'#{year}#',
+						'#{month}#',
+						'#{day}#'
+					), array(
+						$day['solar']['year'],
+						$day['solar']['month'],
+						$day['solar']['day'],
+					), $dayUrl);
+				}
+				$classes = array('text-center');
+				if ($wd == 5 || $wd == 6) {
+					$classes[] = 'bg-warning';
+				}
+				if ($day['type'] === 0) {
+					$classes[] = 'text-default';
+				} else {
+					$classes[] = 'text-muted';
+				}
+				
+				if ($day['isToday']) {
+					$classes = array_diff($classes, array('bg-warning', 'text-default', 'text-muted'));
+					$classes[] = 'bg-danger';
+					$classes[] = 'text-danger';
+				}
+			?>
+				<td data-stamp="<?=$day['stamp']?>" class="<?=implode(' ', $classes)?>">
+					<?php if ($dayUrl):?>
+					<h3><a href="<?=$thisDayUrl?>"><?=$day['solar']['day']?></a></h3>
+					<?php else:?>
+					<h3><?=$day['solar']['day']?></h3>
+					<?php endif?>
+					
+					<?php if ($day['lunar']['firstOfMonth']):?>
+						<h4 class="text-danger"><b><?=$day['lunar']['month']?></b></h4>
+					<?php else:?>
+						<h6><?=$day['lunar']['day']?></h6>
+					<?php endif?>
+					
+					<div class="text-right" style="height:20px">
+						<span class="glyphicon glyphicon-ok text-success hide"></span>
+					</div>
+				</td>
+			<?php endforeach?>
+			</tr>
+		<?php endforeach?>
+	</table>
+	
+<?php if (empty($this->conf['isAjax'])):?>
+</div>
+
+<script>
+	!function($){
+		var container = $('._lessp_calendar_container');
+		container.delegate('td', 'click', function(){
+			var self = $(this);
+			if (!self.hasClass('on')) {
+				self.addClass('on');
+				self.find('.glyphicon-ok').removeClass('hide');
+
+				confs.onSelect && confs.onSelect.call(null, self.data('stamp'));
+			} else {
+				self.removeClass('on');
+				self.find('.glyphicon-ok').addClass('hide');
+
+				confs.onCancel && confs.onCancel.call(null, self.data('stamp'));
+			}
+		}).delegate('a', 'click', function(e){
+			$.get(this.href, function(html) {
+				container.html(html);
+				confs.onLoad && confs.onLoad.call(null);
+			});
+			return false;
+		});
+		
+		var confs = {};
+		window.lessp = window.lessp || {};
+		window.lessp.calendar = {
+			init:function(options){
+				confs.onSelect = options.onSelect || null;
+				confs.onCancel = options.onCancel || null;
+				confs.onLoad = options.onLoad || null;
+			},
+			// 取消选择
+			cancel: function(stamp) {
+				container.find('td').each(function() {
+					var s = $(this);
+					if (s.data('stamp') == stamp) {
+						s.removeClass('on');
+						s.find('.glyphicon-ok').addClass('hide');
+						
+						return false;
+					}
+				});
+			},
+			// 清理选择
+			clean: function() {
+				container.find('td').removeClass('on').find('.glyphicon-ok').addClass('hide');
+			},
+			select: function(stamp) {
+				container.find('td').each(function() {
+					var s = $(this);
+					if (s.data('stamp') == stamp) {
+						s.addClass('on');
+						s.find('.glyphicon-ok').removeClass('hide');
+						return false;
+					}
+				});
+			}
+		};
+	}(jQuery);
+</script>
+<?php endif?>
