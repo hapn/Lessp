@@ -40,7 +40,7 @@ final class ToolApp extends \BaseApp
 		
 		if (!$this->url) {
 			$this->showAppHelp();
-			return;
+			exit();
 		}
 	}
 	

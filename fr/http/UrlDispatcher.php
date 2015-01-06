@@ -40,23 +40,30 @@ class UrlDispatcher
 	private static $protected = array('_before', '_after');
 	
 	private static $lastApp;
+	
+	/**
+	 * 
+	 * @var \lessp\fr\util\Exception
+	 */
+	private $_ex;
 
 	function __construct($app) 
 	{
+		$this->_ex = new Exception(__CLASS__, EXCEPTION_TYPE_USER);
 		if ($app === NULL) {
 			if (!self::$lastApp) {
-				throw new \Exception('urldispatcher.app_required');
+				$this->_ex->newthrow('app_required');
 			}
 			$this->app = self::$lastApp;
 		} else {
 			if (!($app instanceof WebApp)) {
-				throw new \Exception('urldispather.app_must_be_WebApp');
+				$this->_ex->newthrow('app_must_be_WebApp');
 			}
 			self::$lastApp = $this->app = $app;
 		}
 		
 		$this->ctlName = Conf::get('lessp.controlleName', 'ActionController');
-		$this->methodExt = Conf::get('lessp.methodExt', 'Action');
+		$this->methodExt = Conf::get('lessp.methodExt', '_action');
 	}
 
 	/**
@@ -89,10 +96,6 @@ class UrlDispatcher
 			$count--;
 		}
 		
-		if ($count > 0 && in_array($pathseg[$count-1], self::$protected)) {
-			//不允许直接访问的页面
-			throw new \Exception('lessp.u_notfound');
-		}
 		$fullpath = rtrim(PAGE_ROOT.implode('/', $pathseg),'/');
 		$userfunc = '';
 		$ctlName = $this->ctlName.'.php';
@@ -142,25 +145,16 @@ class UrlDispatcher
 				$ctlNs = $this->app->ns.'page\\';
 			}
 		}	
-
-		// 第一个字符为下划线表明必须要通过 POST/PUT/DELETE 方法访问
-		if ( strncmp($func, '_', 1) === 0
-			&& !in_array($this->app->request->method, array('POST', 'PUT', 'DELETE')) ) 
-		{
-			//如果请求为GET则出错
-			throw new \Exception('lessp.u_notfound');
-		}
-		
 		
 		$className = $ctlNs.$this->ctlName;
 		
 		if (is_readable($path)) {
 			require_once $path;
 			if (!class_exists($className)) {
-				throw new \Exception('lessp.u_notfound class='.$className);
+				Exception::notfound(array('class' => $className));
 			}
 		} else {
-			throw new \Exception('lessp.u_notfound');
+			Exception::notfound();
 		}
 		Logger::debug("hit ActionController %s:%s", $path, $func);
 		
@@ -178,6 +172,35 @@ class UrlDispatcher
 			$args = array_diff($args, array(''));
 		}
 		
+		// 根据请求方法对func进行封装和解析
+		$funcs = array();
+		$method = strtolower($this->app->request->method);
+		switch ($method) {
+			case 'get':
+				$funcs = array($func, 'get_'.$func);
+				break;
+			case 'post':
+				if ($func{0} != '_') {
+					Exception::notlogin();
+				}
+			case 'put':
+			case 'delete':
+				if ($func{0} == '_') {
+					$func = substr($func);
+				}
+				if (strpos($func, strtolower($method).'_') === 0) {
+					$func = substr($func, strlen($method) + 1);
+				}
+				$funcs = array($method.'_'.$func, '_'.$func);
+				break;
+			case 'option':
+				$funcs = array('option_'.$func);
+				break;
+			case 'head':
+				$funcs = array('head_'.$func, $func);
+				break;
+		}
+		
 		$mainMethod = $this->_loadMethod($controller, $func, $args);
 		if (!$mainMethod) {
 			if ($func != 'index') {
@@ -185,10 +208,10 @@ class UrlDispatcher
 				array_unshift($args, $func);
 				$mainMethod = $this->_loadMethod($controller, 'index', $args);
 				if (!$mainMethod) {
-					throw new \Exception('lessp.u_notfound');
+					Exception::notlogin();
 				}
 			} else {
-				throw new \Exception('lessp.u_notfound func='.$func.$this->methodExt);
+				Exception::notlogin(array('func' => $func.$this->methodExt));
 			}
 		}
 		
@@ -215,21 +238,27 @@ class UrlDispatcher
 	/**
 	 * 载入反射方法
 	 * @param mixed $controller
-	 * @param string $method
+	 * @param string | array $methods
 	 * @param array $args
 	 */
-	private function _loadMethod($controller, $method, $args = array())
+	private function _loadMethod($controller, $methods, $args = array())
 	{
-		if (!in_array($method, self::$protected)) {
-			$method .= $this->methodExt;
+		if (is_string($methods)) {
+			$methods = array($methods);
 		}
-		if (is_callable(array($controller, $method))) {
-			$reflection = new \ReflectionMethod($controller, $method);
-			$argnum = $reflection->getNumberOfParameters();
-			if ($argnum > count($args)) {
-				throw new \Exception("lessp.u_notfound args not match");
+		
+		foreach($methods as $method) {
+			if (!in_array($method, self::$protected)) {
+				$method .= $this->methodExt;
 			}
-			return $reflection;
+			if (is_callable(array($controller, $method))) {
+				$reflection = new \ReflectionMethod($controller, $method);
+				$argnum = $reflection->getNumberOfParameters();
+				if ($argnum > count($args)) {
+					Exception::notlogin('args not match');
+				}
+				return $reflection;
+			}
 		}
 		return false;
 	}

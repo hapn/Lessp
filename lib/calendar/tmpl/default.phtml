@@ -124,18 +124,27 @@
 	!function($){
 		var container = $('._lessp_calendar_container');
 		container.delegate('td', 'click', function(){
-			var self = $(this);
-			if (!self.hasClass('on')) {
-				self.addClass('on');
-				self.find('.glyphicon-ok').removeClass('hide');
-
-				confs.onSelect && confs.onSelect.call(null, self.data('stamp'));
-			} else {
-				self.removeClass('on');
-				self.find('.glyphicon-ok').addClass('hide');
-
-				confs.onCancel && confs.onCancel.call(null, self.data('stamp'));
+			if (!confs.selectable) {
+				return;
 			}
+			var self = $(this);
+
+			if (confs.markSelect) {
+				if (!self.hasClass('on')) {
+					self.addClass('on');
+					self.find('.glyphicon-ok').removeClass('hide');
+	
+					confs.onSelect && confs.onSelect.call(null, self.data('stamp'));
+				} else {
+					self.removeClass('on');
+					self.find('.glyphicon-ok').addClass('hide');
+	
+					confs.onCancel && confs.onCancel.call(null, self.data('stamp'));
+				}
+				return;
+			}
+
+			confs.onSelect && confs.onSelect.call(null, self.data('stamp'));
 		}).delegate('a', 'click', function(e){
 			$.get(this.href, function(html) {
 				container.html(html);
@@ -144,13 +153,12 @@
 			return false;
 		});
 		
-		var confs = {};
+		var confs = {}, defaults = {selectable:true,markSelect:false};
 		window.lessp = window.lessp || {};
 		window.lessp.calendar = {
 			init:function(options){
-				confs.onSelect = options.onSelect || null;
-				confs.onCancel = options.onCancel || null;
-				confs.onLoad = options.onLoad || null;
+				$.extend(confs, defaults);
+				$.extend(confs, options);
 			},
 			// 取消选择
 			cancel: function(stamp) {
@@ -177,6 +185,18 @@
 						return false;
 					}
 				});
+			},
+			/**
+			 * 允许选择
+			 */
+			enableSelect:function() {
+				confs.selectable = true;
+			},
+			/**
+			 * 不允许选择
+			 */
+			disableSelect:function() {
+				confs.selectable = false;
 			}
 		};
 	}(jQuery);

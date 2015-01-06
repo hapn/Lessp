@@ -13,8 +13,9 @@ use \lessp\fr\util\Timer;
 use \lessp\fr\log\Logger;
 use \lessp\fr\conf\Conf;
 use \lessp\fr\api\Api;
-use lessp\fr\db\TxScope;
-use lessp\fr\db\Db;
+use \lessp\fr\db\TxScope;
+use \lessp\fr\db\Db;
+use \lessp\fr\util\Exception;
 
 const APP_DEBUG_ENABLE = true;
 const APP_DEBUG_DISABLE = false;
@@ -73,6 +74,12 @@ abstract class BaseApp
 	 * @var string
 	 */
 	public $ns;
+	
+	/**
+	 * 异常
+	 * @var lessp\fr\util\Exception
+	 */
+	private $exception;
 	
 	
 	/**
