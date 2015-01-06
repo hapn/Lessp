@@ -5,6 +5,7 @@ namespace lessp\fr\filter;
 use \lessp\fr\util\Encoding;
 use \lessp\fr\app\WebApp;
 use \lessp\fr\conf\Conf;
+use lessp\fr\util\Exception;
 /**
  *  
  * @file        InitFilter.php
@@ -167,7 +168,7 @@ final class InitFilter
 		} elseif (isset($_SERVER['SCRIPT_URL'])) {
 			$app->request->url = $_SERVER['SCRIPT_URL'];
 		} else {
-			throw new \Exception('lessp.u_notfound');
+			Exception::notlogin();
 		}
 		$app->request->url = '/'.ltrim($app->request->url,'/');
 		unset($_GET['route']);

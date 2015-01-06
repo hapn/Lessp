@@ -237,7 +237,7 @@ final class PhpView implements IView
 		if (count($arr) < 2) {
 			throw new \Exception('zenview.partialTplPathIllegal');
 		}
-		$methodName = array_pop($arr).'Action';
+		$methodName = array_pop($arr).'_action';
 		$clsName = $this->viewNs.'\\partial\\'.implode('\\', $arr).'\\PartialController';
 		
 		$ptPath = $this->viewRoot.'/'.implode('/', $arr).'/PartialController.php';

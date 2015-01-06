@@ -28,6 +28,7 @@ final class ToolApp extends \BaseApp
 	function __construct()
 	{
 		parent::__construct();
+		
 		$this->mode = APP_MODE_TOOL;
 		
 		$this->_opts = getopt('dhi:u:', array('url:', 'debug', 'help', 'input:'));
@@ -63,7 +64,7 @@ final class ToolApp extends \BaseApp
 	private function showHelp($clz, $method)
 	{
 		if ( !$clz->hasMethod($method) ) {
-			throw new \Exception('toolapp.methodNotFound method='.$method);
+			$this->_throw('methodNotFound', array('method'=>$method));
 		}
 
 		// 获取类的说明
@@ -152,7 +153,7 @@ HELP;
 		
 		$info = @parse_url($this->url);
 		if ($info === FALSE) {
-			throw new Exception('toolapp.urlIllegal url='.$this->url);
+			$this->_throw('urlIllegal', array('url' => $this->url));
 		}
 		
 		$this->url = $info['path'];
@@ -215,12 +216,12 @@ HELP;
 		$path = TOOL_ROOT.implode('/', $arr).'/ToolController.php';
 		
 		if (!is_readable($path)) {
-			throw new \Exception('toolapp.pathNotFound path='.$path);
+			$this->_throw('pathNotFound', array('path' => $path));
 		}
 		
 		require_once $path;
 		if (!class_exists($clsName)) {
-			throw new \Exception('toolapp.classNotFound class='.$clsName);
+			$this->_throw('classNotFound', array('class' => $clsName));
 		}
 		$cls = new \ReflectionClass($clsName);
 		$ctl = $cls->newInstance($this);
@@ -259,7 +260,7 @@ HELP;
 	private function getFuncArgs($ctl, $method, $args)
 	{
 		if (!is_callable(array($ctl, $method))) {
-			throw new \Exception('toolapp.methodNotFound method='.$method);
+			$this->_throw('methodNotFound', array('method' => $method));
 		}
 		$method = new \ReflectionMethod($ctl, $method);
 		$_params = $method->getParameters();
@@ -271,7 +272,7 @@ HELP;
 			} else if ($param->isDefaultValueAvailable()) {
 				$_args[] = $param->getDefaultValue();
 			} else {
-				throw new \Exception('toolapp.argNotFound arg='.$key);
+				$this->_throw('argNotFound', array('arg' => $key));
 			}
 		}
 		return $_args;

@@ -7,6 +7,7 @@ require_once __DIR__.'/Controller.php';
 use \lessp\fr\app\WebApp;
 use \lessp\fr\conf\Conf;
 use \lessp\fr\log\Logger;
+use lessp\fr\util\Exception;
 /**
  *  
  * @file        UrlDispatcher.php

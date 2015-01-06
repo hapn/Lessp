@@ -182,7 +182,7 @@ class Api
 			}
 			$this->callIntercepter('after', $name, $args, $ret);
 			return $ret;
-		}catch(Exception $ex) {
+		}catch(\Exception $ex) {
 			$this->callIntercepter('exception', $name, $args);
 			throw $ex;
 		}

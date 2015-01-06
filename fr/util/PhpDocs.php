@@ -105,7 +105,7 @@ class PhpDoc
 		} else if ($prefix == '/*') {
 			$ret = self::_anaLongComment(substr($comment, 2, -2));
 		} else {
-			throw new Exception('phpdoc.illegalComment');
+			throw new \Exception('phpdoc.illegalComment');
 		}
 		if (!isset($ret['desc'])) {
 			if (isset($ret['description'])) {

@@ -90,6 +90,22 @@ abstract class BaseApp
 		$this->internalInit();
 		require_once FR_ROOT.'util/Timer.php';
 		$this->timer = new Timer();
+		
+		
+	}
+	
+	/**
+	 * 抛出异常
+	 * @param string $msg
+	 * @param array $args
+	 */
+	protected function _throw($msg, array $args = array())
+	{
+		if (!$this->exception) {
+			require_once FR_ROOT.'util/Exception.php';
+			$this->exception = new Exception($module, EXCEPTION_TYPE_SYSTEM);
+		}
+		$this->exception->newthrow($msg, $args, $type);
 	}
 	
 	/**
