@@ -24,6 +24,8 @@ const APP_DEBUG_MANUAL = 'manual';
 const APP_MODE_WEB = 'web';
 const APP_MODE_TOOL = 'tool';
 
+require_once FR_ROOT.'util/Exception.php';
+
 abstract class BaseApp
 {
 	
@@ -102,8 +104,7 @@ abstract class BaseApp
 	protected function _throw($msg, array $args = array())
 	{
 		if (!$this->exception) {
-			require_once FR_ROOT.'util/Exception.php';
-			$this->exception = new Exception($module, EXCEPTION_TYPE_SYSTEM);
+			$this->exception = new Exception($module, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
 		}
 		$this->exception->newthrow($msg, $args, $type);
 	}

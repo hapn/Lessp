@@ -7,7 +7,7 @@ require_once __DIR__.'/Controller.php';
 use \lessp\fr\app\WebApp;
 use \lessp\fr\conf\Conf;
 use \lessp\fr\log\Logger;
-use lessp\fr\util\Exception;
+use \lessp\fr\util\Exception;
 /**
  *  
  * @file        UrlDispatcher.php
@@ -50,7 +50,7 @@ class UrlDispatcher
 
 	function __construct($app) 
 	{
-		$this->_ex = new Exception(__CLASS__, EXCEPTION_TYPE_USER);
+		$this->_ex = new Exception(__CLASS__, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
 		if ($app === NULL) {
 			if (!self::$lastApp) {
 				$this->_ex->newthrow('app_required');
@@ -187,7 +187,7 @@ class UrlDispatcher
 			case 'put':
 			case 'delete':
 				if ($func{0} == '_') {
-					$func = substr($func);
+					$func = substr($func, 1);
 				}
 				if (strpos($func, strtolower($method).'_') === 0) {
 					$func = substr($func, strlen($method) + 1);
@@ -202,7 +202,7 @@ class UrlDispatcher
 				break;
 		}
 		
-		$mainMethod = $this->_loadMethod($controller, $func, $args);
+		$mainMethod = $this->_loadMethod($controller, $funcs, $args);
 		if (!$mainMethod) {
 			if ($func != 'index') {
 				//$args[] = $func;
