@@ -71,9 +71,10 @@ final class Exception
 	static function getArgsStr($args)
 	{
 		if (is_array($args)) {
-			$argsStr = implode(' ', array_map(function($k, $v) {
-				return $k.'='.$v;
-			}, $args));
+			foreach($args as $k => $v) {
+				$args[$k] = $k.'='.$v;
+			}
+			$argsStr = implode(' ', $args);
 		}
 		if ($argsStr) {
 			$argsStr = ' '.$argsStr;

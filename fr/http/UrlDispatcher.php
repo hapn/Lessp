@@ -152,10 +152,10 @@ class UrlDispatcher
 		if (is_readable($path)) {
 			require_once $path;
 			if (!class_exists($className)) {
-				Exception::notfound(array('class' => $className));
+				throw Exception::notfound(array('class' => $className));
 			}
 		} else {
-			Exception::notfound();
+			throw Exception::notfound();
 		}
 		Logger::debug("hit ActionController %s:%s", $path, $func);
 		
@@ -182,7 +182,7 @@ class UrlDispatcher
 				break;
 			case 'post':
 				if ($func{0} != '_') {
-					Exception::notlogin();
+					throw Exception::notfound();
 				}
 			case 'put':
 			case 'delete':
@@ -204,15 +204,15 @@ class UrlDispatcher
 		
 		$mainMethod = $this->_loadMethod($controller, $funcs, $args);
 		if (!$mainMethod) {
-			if ($func != 'index') {
+			if ($func != 'index' && $method == 'GET') {
 				//$args[] = $func;
 				array_unshift($args, $func);
 				$mainMethod = $this->_loadMethod($controller, 'index', $args);
 				if (!$mainMethod) {
-					Exception::notlogin();
+					throw Exception::notfound();
 				}
 			} else {
-				Exception::notlogin(array('func' => $func.$this->methodExt));
+				throw Exception::notfound(array('func' => $func.$this->methodExt));
 			}
 		}
 		
@@ -256,7 +256,7 @@ class UrlDispatcher
 				$reflection = new \ReflectionMethod($controller, $method);
 				$argnum = $reflection->getNumberOfParameters();
 				if ($argnum > count($args)) {
-					Exception::notlogin('args not match');
+					throw Exception::notfound('args not match');
 				}
 				return $reflection;
 			}

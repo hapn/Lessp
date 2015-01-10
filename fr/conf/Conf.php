@@ -3,13 +3,13 @@
 namespace lessp\fr\conf;
 
 /**
- *  
- * @file        Log.php
+ * 配置文件
+ * 
+ * @filesource 	Conf.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since       2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 配置文件
  * @example     
  */
 

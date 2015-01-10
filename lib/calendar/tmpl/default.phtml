@@ -97,18 +97,18 @@
 			?>
 				<td data-stamp="<?=$day['stamp']?>" class="<?=implode(' ', $classes)?>">
 					<?php if ($dayUrl):?>
-					<h3><a href="<?=$thisDayUrl?>"><?=$day['solar']['day']?></a></h3>
+					<h4><a href="<?=$thisDayUrl?>"><?=$day['solar']['day']?></a></h4>
 					<?php else:?>
-					<h3><?=$day['solar']['day']?></h3>
+					<h4><?=$day['solar']['day']?></h4>
 					<?php endif?>
 					
 					<?php if ($day['lunar']['firstOfMonth']):?>
-						<h4 class="text-danger"><b><?=$day['lunar']['month']?></b></h4>
+						<h5 class="text-danger"><b><?=$day['lunar']['month']?></b></h5>
 					<?php else:?>
 						<h6><?=$day['lunar']['day']?></h6>
 					<?php endif?>
 					
-					<div class="text-right" style="height:20px">
+					<div class="text-right" style="height:20px;margin-top:-20px;">
 						<span class="glyphicon glyphicon-ok text-success hide"></span>
 					</div>
 				</td>

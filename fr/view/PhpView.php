@@ -107,7 +107,7 @@ final class PhpView implements IView
 	function __get($name)
 	{
 		for($i = $this->partialLevel; $i >= max($i - 1, 0); $i--) {
-			if (array_key_exists($name, $this->_v[$i])) {
+			if (isset($this->_v[$i]) && array_key_exists($name, $this->_v[$i])) {
 				return $this->$name = $this->_v[$i][$name];
 			}
 		}
