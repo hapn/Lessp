@@ -2,9 +2,11 @@
 
 namespace lessp\fr\view;
 
-use lessp\fr\app\WebApp;
+use \lessp\fr\app\WebApp;
+use \lessp\fr\http\UrlDispatcher;
 require_once __DIR__.'/IView.php';
 require_once __DIR__.'/Helper.php';
+require_once FR_ROOT.'http/UrlDispatcher.php';
 
 /**
  * 
@@ -25,26 +27,29 @@ final class PhpView implements IView
 	 * 请求
 	 * @var \fillp\fr\http\Request
 	 */
-	var $request;
+	var $_request;
 	
-	private $app = null;
-	private $viewRoot = '';
-	private $helperRoot = '';
-	private $cacheRoot = '';
+	private $_viewRoot = '';
+	private $_helperRoot = '';
+	private $_cacheRoot = '';
 	static $HelperCache = array();
-	private $tplExt;
-	
-	/**
-	 * partial的级别，为0表示最外层的view
-	 * @var int
-	 */
-	private $partialLevel = 0;
+	private $_tplExt;
+	// 是否在渲染模板
+	private $_renderLayout;
 	
 	/**
 	 * 命名空间
 	 * @var string
 	 */
-	private $viewNs;
+	private $_viewNs;
+	
+	/**
+	 * 模板位置
+	 * @var string
+	 */
+	private $_layout;
+	
+	private $_layoutArgs;
 	
 	/**
 	 * (non-PHPdoc)
@@ -55,16 +60,16 @@ final class PhpView implements IView
 		if (!isset($conf['viewNs'])) {
 			throw new \Exception('zendview.viewNsRequired');
 		}
-		$this->viewNs = rtrim($conf['viewNs'], '\\');
+		$this->_viewNs = rtrim($conf['viewNs'], '\\');
 		if (!isset($conf['request']) || !($conf['request'] instanceof \lessp\fr\http\Request)) {
 			throw new \Exception('zendview.requestIllegal');
 		}
-		$this->request = $conf['request'];
+		$this->_request = $conf['request'];
 		
-		$this->viewRoot = isset($conf['viewRoot']) ? $conf['viewRoot'] : PAGE_ROOT;
-		$this->helperRoot = isset($conf['viewRoot']) ? $conf['viewRoot'] : PLUGIN_ROOT.'helper/';
-		$this->cacheRoot = isset($conf['cacheRoot']) ? $conf['cacheRoot'] : TMP_ROOT.'zendview/';
-		$this->tplExt = isset($conf['tplExt']) ? $conf['tplExt'] : 'phtml';
+		$this->_viewRoot = isset($conf['viewRoot']) ? $conf['viewRoot'] : PAGE_ROOT;
+		$this->_helperRoot = isset($conf['viewRoot']) ? $conf['viewRoot'] : PLUGIN_ROOT.'helper/';
+		$this->_cacheRoot = isset($conf['cacheRoot']) ? $conf['cacheRoot'] : TMP_ROOT.'zendview/';
+		$this->_tplExt = isset($conf['tplExt']) ? $conf['tplExt'] : 'phtml';
 	}
 	
 	/**
@@ -73,12 +78,7 @@ final class PhpView implements IView
 	 */
 	function sets(array $arr)
 	{
-		$level = $this->partialLevel;
-		if (isset($this->_v[$level])) {
-			$this->_v[$level] = array_merge($this->_v[$level], $arr);
-		} else {
-			$this->_v[$level] = $arr;
-		}
+		$this->_v = array_merge($this->_v, $arr);
 	}
 	
 	/**
@@ -87,7 +87,17 @@ final class PhpView implements IView
 	 */
 	function set($key, $value)
 	{
-		$this->_v[$this->partialLevel][$key] = $value;
+		$this->_v[$key] = $value;
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \lessp\fr\view\IView::setLayout()
+	 */
+	function setLayout($layout, $args = array())
+	{
+		$this->_layout = $layout;
+		$this->_layoutArgs = $args;
 	}
 	
 	/**
@@ -106,10 +116,14 @@ final class PhpView implements IView
 	 */
 	function __get($name)
 	{
-		for($i = $this->partialLevel; $i >= max($i - 1, 0); $i--) {
-			if (isset($this->_v[$i]) && array_key_exists($name, $this->_v[$i])) {
-				return $this->$name = $this->_v[$i][$name];
+		if ($this->_renderLayout) {
+			if (array_key_exists($name, $this->_layoutArgs)) {
+				return $this->_layoutArgs[$name];
 			}
+		}
+		
+		if (array_key_exists($name, $this->_v)) {
+			return $this->_v[$name];
 		}
 		return NULL;
 	}
@@ -126,12 +140,21 @@ final class PhpView implements IView
 			//这样操作避免开发人员不正确编码，包含这些字符可能带来安全性问题，
 			throw new \Exception('hapn.notpl not suport "..|`|!"');
 		}
-		$this->file = $this->viewRoot.'/'.ltrim($template,'/');
+		$this->file = $this->_viewRoot.'/'.ltrim($template,'/');
 		if (is_readable($this->file)) {
 			unset($template);
 			ob_start();
 			include $this->file;
-			return ob_get_clean();
+			$body = ob_get_clean();
+			$this->_blockes['__BODY__'] = $body;
+			
+			// 检查是否有layout
+			if ($this->_layout && !$this->_renderLayout) {
+				$this->_renderLayout = true;
+				$body = $this->fetch($this->_layout);
+				$this->_renderLayout = false;
+			}
+			return $body;
 		}
 		throw new \Exception('lessp.notpl '.$this->file.' no such file or directory');
 	}
@@ -145,131 +168,65 @@ final class PhpView implements IView
 		echo $this->fetch($template);
 	}
 	
-	private function enterPartialStatus()
-	{
-		$this->partialLevel++;
-		
-		if ($this->partialLevel > 2) {
-			throw new \Exception('phpview.partialLevelTooBig');
-		}
-	}
-	
 	/**
-	 * 离开partial状态
-	 */
-	private function leavePartialStatus()
-	{
-		if (isset($this->_v[$this->partialLevel])) {	
-			foreach($this->_v[$this->partialLevel] as $key => $value) {
-				unset($this->$key);
-			}
-
-			unset($this->_v[$this->partialLevel]);
-		}
-		$this->partialLevel--;
-	}
-	
-	
-	/**
-	 * 局部模块 支持对Pagelet和phtml文件两种形式
+	 * 局部模块 直接嵌入另一个ActionController的action方法
 	 * @param string $template 模板地址
 	 * @param array $args 变量
-	 * @param int $cacheExpire
-	 * @param string $cacheKey
 	 */
-	function partial($template, $args = array(), $cacheExpire = 0, $cacheKey = '')
+	function partial($template, $args = array())
 	{
 		$template = trim(strtolower($template));
-		if (is_int($args) && func_arg_nums() == 2) {
-			$cacheExpire = $args;
-			$args = array();
-		}
-		$this->sets($args);
-		 
+		
 		// 检测是partial的phtml还是Pagelet
-		$isPagelet = substr($template, - (strlen($this->tplExt) + 1)) != '.'.$this->tplExt;
-		if ($cacheExpire > 0) {
-			if (!$cacheKey) {
-				$cacheKey = hash('sha1',  $template.(!empty($args) ? json_encode($args, JSON_UNESCAPED_UNICODE) : ''));
-			}
-			$cacheFile = sprintf('%s/%2s/%s.html', $this->cacheRoot, substr($cacheKey, 0, 2), $cacheKey);
-			if (is_readable($cacheFile) && filemtime($cacheFile) + $cacheExpire > time()) {
-				return file_get_contents($cacheFile);
-			}
-			
-			$this->enterPartialStatus();
+		$isPagelet = substr($template, - (strlen($this->_tplExt) + 1)) != '.'.$this->_tplExt;
+		
+		$dispatcher = new UrlDispatcher(NULL, \lessp\fr\http\DISPATCH_MODE_PARTIAL);
+		return $dispatcher->dispatch($template, $args);
+	}
 	
-			if ($isPagelet) {
-				$html = $this->_partial($template, $args);
-			} else {
-				$html = $this->fetch($template);
-			}
-			
-			$this->leavePartialStatus();
-			
-			if (!is_dir(dirname($cacheFile))) {
-				mkdir(dirname($cacheFile), 0755, true);
-			}
-			file_put_contents($cacheFile, $html);
-			return $html;
+	private $_startBlockName = array();
+	private $_blockes = array();
+	
+	/**
+	 * 启动/停止一个块的解释
+	 * @param string $name
+	 * @param string $value 指定block的值
+	 */
+	function block($name = NULL, $value = NULL)
+	{
+		// 只有启用了模板的时候，才会将其内容缓存
+		if (!$this->_layout) {
+			return;
 		}
-		$this->enterPartialStatus();
-		if ($isPagelet) {
-			$html =  $this->_partial($template, $args);
+		if ($name) {
+			$this->_startBlockName[] = $name;
+			
+			if ($value !== NULL) {
+				$this->_blockes[$name] = $value;
+				return;
+			}
+			
+			ob_start();
 		} else {
-			$html = $this->render($template);
+			if (empty($this->_startBlockName)) {
+				throw new \Exception('view.noBlockStart');
+			}
+			$lastBlockName = array_pop($this->_startBlockName);
+			$result = ob_get_clean();
+			$this->_blockes[$lastBlockName] = $result;
 		}
-		$this->leavePartialStatus();
-		return $html;
 	}
 	
 	/**
-	 * 执行partial的方法，返回代码
-	 * @param string $path
-	 * @param array $args
-	 * @throws \Exception
-	 * 
-	 * @return string
+	 * 获取指定的block块的内容
+	 * @param string $name
 	 */
-	private function _partial($path)
+	function getBlock($name)
 	{
-		$arr = explode('/', trim($path, '/'));
-		if (count($arr) < 2) {
-			throw new \Exception('zenview.partialTplPathIllegal');
+		if (array_key_exists($name, $this->_blockes)) {
+			return $this->_blockes[$name];
 		}
-		$methodName = array_pop($arr).'_action';
-		$clsName = $this->viewNs.'\\partial\\'.implode('\\', $arr).'\\PartialController';
-		
-		$ptPath = $this->viewRoot.'/'.implode('/', $arr).'/PartialController.php';
-		if (!is_readable($ptPath)) {
-			throw new \Exception('zendview.partialNotFound path='.$ptPath);
-		}
-		
-		require_once __DIR__.'/Partial.php';
-		require_once $ptPath;
-		
-		if (!class_exists($clsName)) {
-			throw new \Exception('zendview.classNotFound class='. $clsName);
-		}
-		
-		$ctl = new $clsName();
-		if (!is_callable(array($ctl, $methodName))) {
-			throw new \Exception('zendview.methodNotFound method='.$methodName);
-		}
-		$ctl->view = $this;
-		return call_user_func(array($ctl, $methodName));
-	}
-	
-	
-	/**
-	 * 使用pagelet技术获取html片段
-	 * @param string $uri
-	 * @param array $args
-	 * 
-	 * @todo 等待实现
-	 */
-	function pagelet($uri, $args = array())
-	{
+		return '';
 	}
 	
 	//通过魔术函数，调用helper功能
@@ -298,8 +255,8 @@ final class PhpView implements IView
 	 */
 	function _getHelper($name)
 	{
-		if ($this->helperRoot) {
-			$file = $this->helperRoot.$name.'.php';
+		if ($this->_helperRoot) {
+			$file = $this->_helperRoot.$name.'.php';
 			if (is_readable($file)) {
 				return $file;
 			}

@@ -163,7 +163,7 @@ class Request
 	 * @param string $key 键
 	 * @param mixed $value 值
 	 */
-	function set($key,$value)
+	function set($key, $value)
 	{
 		$this->inputs[$key] = $value;
 	}

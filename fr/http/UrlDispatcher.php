@@ -19,6 +19,12 @@ use \lessp\fr\util\Exception;
  * @example     
  */
 
+// 正常模式
+const DISPATCH_MODE_NORMAL 	= 'normal';
+// 重定向模式
+const DISPATCH_MODE_FORWARD = 'forward';
+// 获取模式
+const DISPATCH_MODE_PARTIAL	= 'partial';
 class UrlDispatcher
 {
 	/**
@@ -42,13 +48,21 @@ class UrlDispatcher
 	
 	private static $lastApp;
 	
+	
 	/**
 	 * 
 	 * @var \lessp\fr\util\Exception
 	 */
 	private $_ex;
+	
+	private $mode;
 
-	function __construct($app) 
+	/**
+	 * 构建函数
+	 * @param WebApp $app
+	 * @param string 	$mode 模式 normal:正常 forward:重定向 fetch:内部抓取
+	 */
+	function __construct($app, $mode = DISPATCH_MODE_NORMAL) 
 	{
 		$this->_ex = new Exception(__CLASS__, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
 		if ($app === NULL) {
@@ -65,6 +79,7 @@ class UrlDispatcher
 		
 		$this->ctlName = Conf::get('lessp.controlleName', 'ActionController');
 		$this->methodExt = Conf::get('lessp.methodExt', '_action');
+		$this->mode = $mode;
 	}
 
 	/**
@@ -72,7 +87,7 @@ class UrlDispatcher
 	 * @param string $url
 	 * @throws \Exception
 	 */
-	function dispatch($url)
+	function dispatch($url, $inputArgs = array())
 	{
 		$args = array();
 		$pathseg = array();
@@ -155,18 +170,30 @@ class UrlDispatcher
 				throw Exception::notfound(array('class' => $className));
 			}
 		} else {
-			throw Exception::notfound();
+			throw Exception::notfound(array('path' => $path));
 		}
-		Logger::debug("hit ActionController %s:%s", $path, $func);
+		Logger::debug("hit ActionController[%s] %s:%s", $this->mode, $path, $func);
 		
 		
 		$controller = new $className();
 		//把当前处理请求和相应的对象设置好
-		$controller->request = $this->app->request;
-		$controller->response = $this->app->response;
+		if ($this->mode != DISPATCH_MODE_NORMAL) {
+			$controller->request = clone($this->app->request);
+			$controller->response = clone($this->app->response);
+		} else {
+			$controller->request = $this->app->request;
+			$controller->response = $this->app->response;
+		}
+		if (!empty($inputArgs)) {
+			foreach($inputArgs as $_k => $_v) {
+				$controller->response->set($_k, $_v);
+			}
+		}
 		$controller->encoding = $this->app->encoding;
 		$controller->debug = $this->app->debug;
 		$controller->appId = $this->app->appId;
+		$controller->mode = $this->mode;
+		
 
 		if ($func != 'index') {
 			//index函数允许有一个空串参数
@@ -233,6 +260,9 @@ class UrlDispatcher
 		
 		if (is_callable(array($controller, '_after'))) {
 			call_user_func(array($controller, '_after'));
+		}
+		if ($this->mode == DISPATCH_MODE_PARTIAL) {
+			return $controller->response->send(true);
 		}
 	}
 	

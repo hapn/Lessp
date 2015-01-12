@@ -20,13 +20,13 @@ class WebApp extends \BaseApp {
 	public $filterExecutor = null;
 	/**
 	 * Http请求类
-	 * @var lessp\fr\http\Request
+	 * @var \lessp\fr\http\Request
 	 */
 	public $request = null;
 	
 	/**
 	 * Http响应类
-	 * @var lessp\fr\http\Response
+	 * @var \lessp\fr\http\Response
 	 */
 	public $response = null;
 	// 是否为后台运行的模式

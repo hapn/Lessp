@@ -68,7 +68,7 @@ class FilterExecutor
 				if (!class_exists($classname)) {
 					throw new \Exception('lessp.errclass class='.$classname);
 				}
-				Logger::debug('load filter %s.%s', $key, $classname);
+				// Logger::debug('load filter %s.%s', $key, $classname);
 				$this->impFilters[$key][] = new $classname();
 			}
 		}
@@ -83,7 +83,7 @@ class FilterExecutor
 	{
 		$timerKey = 'f_'.$filtername;
 		if (!isset($this->impFilters[$filtername])) {
-			Logger::debug('miss filter %s',$filtername);
+			// Logger::debug('miss filter %s',$filtername);
 			return true;
 		}
 		$this->app->timer->begin($timerKey);
@@ -94,7 +94,7 @@ class FilterExecutor
 				$this->app->timer->end('f_'.$filtername);
 				return false;
 			}
-			Logger::debug('call filter %s.%s=true',$filtername, get_class($filter));
+			// Logger::debug('call filter %s.%s=true',$filtername, get_class($filter));
 		}
 		$this->app->timer->end($timerKey);
 		return true;

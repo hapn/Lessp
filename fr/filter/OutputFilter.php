@@ -28,11 +28,11 @@ final class OutputFilter implements IFilter
 		if ($app->encoding !== $to) {
 			require_once FR_ROOT.'util/Encoding.php';
 			Encoding::convertArray($app->response->outputs, $to, $app->encoding);
-			Encoding::convertArray($app->response->headers,$to,$app->encoding);
+			Encoding::convertArray($app->response->headers, $to, $app->encoding);
 		}
 		$app->response->send();
 	
-		$enableTask = Conf::get('lessp.task_enable', false);
+		$enableTask = Conf::get('lessp.task_enable', true);
 		if ($enableTask) {
 			// 将后续请求转入后台处理
 			fastcgi_finish_request();

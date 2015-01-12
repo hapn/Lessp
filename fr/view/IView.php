@@ -32,6 +32,13 @@ interface IView
 	function set($key, $value);
 	
 	/**
+	 * 设置模板路径
+	 * @param string $layout
+	 * @param array $args 参数
+	 */
+	function setLayout($layout, $args = array());
+	
+	/**
 	 * 渲染模板并输出 
 	 * @param string $template
 	 */

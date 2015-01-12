@@ -29,6 +29,12 @@ abstract class Controller
 	var $encoding = null;
 	
 	/**
+	 * 模式 normal：正常 forward：跳转 partial：包含
+	 * @var string
+	 */
+	var $mode = DISPATCH_MODE_NORMAL;
+	
+	/**
 	 * action调用之前调用的方法
 	 * @param string $method
 	 * @param array $args
@@ -117,10 +123,11 @@ abstract class Controller
 	/**
 	 * 跳转页面请求
 	 * @param string $url
+	 * @param array $args
 	 */
-	function forward($url)
+	function forward($url, $args = array())
 	{
-		$dispatcher = new UrlDispatcher(NULL);
-		$dispatcher->dispatch($url);
+		$dispatcher = new UrlDispatcher(NULL, DISPATCH_MODE_FORWARD);
+		$dispatcher->dispatch($url, $args);
 	}
 }

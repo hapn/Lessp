@@ -161,7 +161,7 @@ class Response
 	 * @param string $path 模板路径，相对于PAGE_ROOT的相对路径
 	 * @param array $arr 变量
 	 */
-	function setView($path,$arr=array())
+	function setView($path, $arr=array())
 	{
 		if ($arr) {
 			$this->outputs = array_merge($this->outputs,$arr);
@@ -387,6 +387,8 @@ class Response
 			}
 		}
 		if ($headers) {
+			
+// 			var_dump(headers_list(), $this->template, $headers);
 			//echo header
 			foreach($headers as $header) {
 				header($header);
@@ -396,19 +398,26 @@ class Response
 	
 	/**
 	 * 发送内容
+	 * @param boolean $inner 是否为内部输出，如果是内部输出，则不用设置header等。
 	 */
-	function send()
+	function send($inner = false)
 	{
-		$this->setLesspHeader();
-		$data = $this->_formatResponse();
-		$this->sendHeaders();
-		//获取缓冲数据
-		$ob = ini_get('output_buffering');
-		if ($ob && strtolower($ob) !== 'off') {
-			$str = ob_get_clean();
-			//忽略前后空白
-			$data = trim($str).$data;
+		if ($inner) {
+			$data = $this->_formatResponse();
+		} else {
+			$this->setLesspHeader();
+			$data = $this->_formatResponse();
+			$this->sendHeaders();
+			
+			//获取缓冲数据
+			$ob = ini_get('output_buffering');
+			if ($ob && strtolower($ob) !== 'off') {
+				$str = ob_get_clean();
+				//忽略前后空白
+				$data = trim($str).$data;
+			}
 		}
+		
 		if ($data) {
 			$outhandler = Conf::get('lessp.outputhandler',array());
 			if ($outhandler && !is_array($outhandler)) {
@@ -425,7 +434,11 @@ class Response
 					}
 				}
 			}
-			echo $data;
+			if ($inner) {
+				return $data;
+			} else {
+				echo $data;
+			}
 		}
 	}
 	
