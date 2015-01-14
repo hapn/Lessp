@@ -188,8 +188,13 @@ class WebApp extends \BaseApp {
 			$this->response->sendHeaders ();
 			echo "<br/>Redirect: <a href='$url'>$url</a><br/>";
 		} else {
+			$redirect = TRUE;
+			if ($url[0] == '!') {
+				$redirect = FALSE;
+				$url = substr($url, 1);
+			}
 			$info = @parse_url($url);
-			if ($info && !empty($info['host'])) {
+			if ( $info && ($redirect || !empty($info['host'])) ) {
 				// 如果设置的文件是一个实际的路径，则直接输出内容，不跳转
 				$this->response->setHeader ( 'Location: ' . $url );
 				// 设置正常结束状态
