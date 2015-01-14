@@ -75,6 +75,8 @@ final class Exception
 				$args[$k] = $k.'='.$v;
 			}
 			$argsStr = implode(' ', $args);
+		} else {
+			$argsStr = $args;
 		}
 		if ($argsStr) {
 			$argsStr = ' '.$argsStr;

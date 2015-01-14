@@ -32,7 +32,7 @@ final class PhpView implements IView
 	private $_viewRoot = '';
 	private $_helperRoot = '';
 	private $_cacheRoot = '';
-	static $HelperCache = array();
+	static $_helperCache = array();
 	private $_tplExt;
 	// 是否在渲染模板
 	private $_renderLayout;
@@ -232,18 +232,36 @@ final class PhpView implements IView
 	//通过魔术函数，调用helper功能
 	function __call($name,$args)
 	{
-		if (isset(self::$HelperCache[$name])) {
-			$helper = self::$HelperCache[$name];
-		} else {
-			$helperFile = $this->_getHelper($name);
-			require_once $helperFile;
-			$class = 'ZendView'.ucfirst($name).'Helper';
-			$helper = new $class();
-			$helper->setView($this);
-	
-			self::$HelperCache[$name] = $helper;
+		if (isset(self::$_helperCache[$name])) {
+			return self::$_helperCache[$name];
 		}
-		return call_user_func_array(array($helper,$name),$args);
+		
+		$found = false;
+		if ($this->_helperRoot) {
+			$file = $this->_helperRoot.$name.'.php';
+			if (is_readable($file)) {
+				$found = true;
+				$className = $this->_viewNs.'\\helper\\'.$name;
+			}
+		} 
+		if (!$found) {
+			$file = __DIR__.'/helper/'.$name.'.php';
+			if (is_readable($file)) {
+				$found = true;
+				$className = __NAMESPACE__.'\\helper\\'.$className;
+			}
+		}
+		if (!$found) {
+			throw new \Exception('lessp.phpview_nohelper helper='.$name);
+		}
+		
+		require_once $file;
+		if (!class_exists($className)) {
+			throw new \Exception('lessp.phpview_noclass class='.$className);
+		}
+		$helper = new $className($this);
+
+		return self::$_helperCache[$name] = $helper;
 	}
 	
 	/**
