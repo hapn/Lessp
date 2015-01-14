@@ -188,18 +188,25 @@ class WebApp extends \BaseApp {
 			$this->response->sendHeaders ();
 			echo "<br/>Redirect: <a href='$url'>$url</a><br/>";
 		} else {
-			// 如果设置的文件是一个实际的路径，则直接输出内容，不跳转
-			if (is_file ( $url )) {
-				ob_clean ();
-				$output = include ($url);
+			$info = @parse_url($url);
+			if ($info && !empty($info['host'])) {
+				// 如果设置的文件是一个实际的路径，则直接输出内容，不跳转
+				$this->response->setHeader ( 'Location: ' . $url );
+				// 设置正常结束状态
 				$this->response->sendHeaders ();
-				$this->response->setRaw ( $output );
 				exit ();
+			} else {
+				if (isset($info['query'])) {
+					parse_str($info['query'], $args);
+				} else {
+					$args = array();
+				}
+				$res = $this->response->forward($info['path'], $args);
+				$res->send();
+				$res->sendHeaders();
+				$res->end();
+				exit();
 			}
-			$this->response->setHeader ( 'Location: ' . $url );
-			// 设置正常结束状态
-			$this->response->sendHeaders ();
-			exit ();
 		}
 	}
 	

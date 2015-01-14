@@ -453,4 +453,15 @@ class Response
 		$this->tasks[] = array($callback, $args);
 	}
 	
+	/**
+	 * 跳转页面请求
+	 * @param string $url
+	 * @param array $args
+	 */
+	function forward($url, $args = array())
+	{
+		$dispatcher = new UrlDispatcher(NULL, DISPATCH_MODE_FORWARD);
+		return $dispatcher->dispatch($url, $args);
+	}
+	
 }

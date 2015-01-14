@@ -124,10 +124,10 @@ abstract class Controller
 	 * 跳转页面请求
 	 * @param string $url
 	 * @param array $args
+	 * @see \lessp\fr\http\Response::forward
 	 */
 	function forward($url, $args = array())
 	{
-		$dispatcher = new UrlDispatcher(NULL, DISPATCH_MODE_FORWARD);
-		$dispatcher->dispatch($url, $args);
+		$this->response->forward($url, $args);
 	}
 }

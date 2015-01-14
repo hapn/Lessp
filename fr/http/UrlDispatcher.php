@@ -86,6 +86,12 @@ class UrlDispatcher
 	 * 分配网址
 	 * @param string $url
 	 * @throws \Exception
+	 * 
+	 * @return string|null|\lessp\fr\http\Response
+	 * 
+	 * normal模式：null
+	 * forward模式：Response
+	 * partial模式：string
 	 */
 	function dispatch($url, $inputArgs = array())
 	{
@@ -180,6 +186,8 @@ class UrlDispatcher
 		if ($this->mode != DISPATCH_MODE_NORMAL) {
 			$controller->request = clone($this->app->request);
 			$controller->response = clone($this->app->response);
+			
+			$controller->response->setView(NULL);
 		} else {
 			$controller->request = $this->app->request;
 			$controller->response = $this->app->response;
@@ -205,7 +213,14 @@ class UrlDispatcher
 		$method = strtolower($this->app->request->method);
 		switch ($method) {
 			case 'get':
-				$funcs = array($func, 'get_'.$func);
+				$funcs = array($func);
+				
+				// 如果不是正常的模式，允许尝试追加模式对应的url。
+				// 也就是说，如果想让一个url只支持通过partial或者forward的模式访问，可以只定义特定的网址
+				if ($this->mode !== DISPATCH_MODE_NORMAL) {
+					$funcs[] = $func.'_'.$this->mode;
+				}
+				
 				break;
 			case 'post':
 				if ($func{0} != '_') {
@@ -263,6 +278,9 @@ class UrlDispatcher
 		}
 		if ($this->mode == DISPATCH_MODE_PARTIAL) {
 			return $controller->response->send(true);
+		}
+		if ($this->mode == DISPATCH_MODE_FORWARD) {
+			return $controller->response;
 		}
 	}
 	
