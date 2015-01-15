@@ -178,10 +178,14 @@ class UrlDispatcher
 		} else {
 			throw Exception::notfound(array('path' => $path));
 		}
+		$path = str_replace(PAGE_ROOT, '', $path);
+		$relpath = trim(dirname($path), '/');
 		Logger::debug("hit ActionController[%s] %s:%s", $this->mode, $path, $func);
 		
 		
 		$controller = new $className();
+		$controller->relpath = $relpath;
+		
 		//把当前处理请求和相应的对象设置好
 		if ($this->mode != DISPATCH_MODE_NORMAL) {
 			$controller->request = clone($this->app->request);

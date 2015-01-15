@@ -35,6 +35,12 @@ abstract class Controller
 	var $mode = DISPATCH_MODE_NORMAL;
 	
 	/**
+	 * 相对于PAGE_ROOT的位置
+	 * @var string
+	 */
+	var $relpath;
+	
+	/**
 	 * action调用之前调用的方法
 	 * @param string $method
 	 * @param array $args
@@ -117,6 +123,9 @@ abstract class Controller
 	 */
 	function setView($template, $data = array())
 	{
+		if ($template[0] != '/') {
+			$template = $this->relpath.'/'.$template;
+		}
 		return $this->response->setView($template, $data);
 	}
 	
