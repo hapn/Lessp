@@ -194,7 +194,8 @@ class UrlDispatcher
 			$controller->request = $this->app->request;
 			$controller->response = $this->app->response;
 		}
-		$controller->response->setView(NULL);
+		
+		$controller->response->template = NULL;
 		if (!empty($inputArgs)) {
 			foreach($inputArgs as $_k => $_v) {
 				$controller->request->set($_k, $_v);
@@ -204,7 +205,6 @@ class UrlDispatcher
 		$controller->debug = $this->app->debug;
 		$controller->appId = $this->app->appId;
 		$controller->mode = $this->mode;
-		
 
 		if ($func != 'index') {
 			//index函数允许有一个空串参数

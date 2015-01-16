@@ -55,7 +55,7 @@ final class InitFilter
 	{
 		$headers = array();
 		foreach($app->request->serverEnvs as $key=>$value) {
-			if (strncmp('HTTP_',$key,5) === 0) {
+			if (strncmp('HTTP_', $key, 5) === 0) {
 				$headers[$key] = $value;
 			}
 		}
@@ -99,8 +99,8 @@ final class InitFilter
 		if (!empty($arr['_of'])) {
 			$app->request->of = $arr['_of'];
 		} else {
-			if ($app->request->method == 'POST' ||
-			$app->request->method == 'PUT') {
+			$method = $app->request->method;
+			if ( in_array($method, array('POST', 'PUT', 'DELETE') )) {
 				//非GET请求默认都按照JSON返回了
 				$app->request->of = 'json';
 			} else {
