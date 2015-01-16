@@ -197,7 +197,7 @@ class UrlDispatcher
 		$controller->response->setView(NULL);
 		if (!empty($inputArgs)) {
 			foreach($inputArgs as $_k => $_v) {
-				$controller->response->set($_k, $_v);
+				$controller->request->set($_k, $_v);
 			}
 		}
 		$controller->encoding = $this->app->encoding;
