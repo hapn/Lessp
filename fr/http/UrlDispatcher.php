@@ -90,7 +90,7 @@ class UrlDispatcher
 	 * @return string|null|\lessp\fr\http\Response
 	 * 
 	 * normal模式：null
-	 * forward模式：Response
+	 * forward模式：null
 	 * partial模式：string
 	 */
 	function dispatch($url, $inputArgs = array())
@@ -187,15 +187,14 @@ class UrlDispatcher
 		$controller->relpath = $relpath;
 		
 		//把当前处理请求和相应的对象设置好
-		if ($this->mode != DISPATCH_MODE_NORMAL) {
+		if ($this->mode == DISPATCH_MODE_PARTIAL) {
 			$controller->request = clone($this->app->request);
 			$controller->response = clone($this->app->response);
-			
-			$controller->response->setView(NULL);
 		} else {
 			$controller->request = $this->app->request;
 			$controller->response = $this->app->response;
 		}
+		$controller->response->setView(NULL);
 		if (!empty($inputArgs)) {
 			foreach($inputArgs as $_k => $_v) {
 				$controller->response->set($_k, $_v);
@@ -282,9 +281,6 @@ class UrlDispatcher
 		}
 		if ($this->mode == DISPATCH_MODE_PARTIAL) {
 			return $controller->response->send(true);
-		}
-		if ($this->mode == DISPATCH_MODE_FORWARD) {
-			return $controller->response;
 		}
 	}
 	

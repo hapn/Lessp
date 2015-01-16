@@ -4,6 +4,7 @@ namespace lessp\fr\app;
 
 use \lessp\fr\log\Logger;
 use \lessp\fr\conf\Conf;
+use lessp\fr\util\Exception;
 require_once __DIR__ . '/BaseApp.php';
 
 /**
@@ -167,7 +168,7 @@ class WebApp extends \BaseApp {
 		if (strncmp ( $domain, 'http', 4 ) !== 0) {
 			$domain = 'http://' . $domain;
 		}
-		$url = str_replace ( '[url]', urlencode ( $domain . $this->request->uri ), $url );
+		$url = str_replace ( '[url]', urlencode ( $domain . $this->request->rawUri ), $url );
 		$isUserEx = false;
 		if (! $this->isUserErr ( $errcode ) && ! is_file ( $url )) {
 			$di = base64_encode ( 'ip=' . $this->request->userip . ':time=' . $this->request->now . ':id=' . $this->appId );
@@ -179,7 +180,7 @@ class WebApp extends \BaseApp {
 		} else {
 			$isUserEx = true;
 		}
-		if ($errcode === 'lessp.u_notfound') {
+		if ($errcode === \lessp\fr\util\MSG_NOT_FOUND) {
 			$this->response->setHeader ( 'HTTP/1.0 404 Not Found' );
 		} elseif (! $isUserEx) {
 			$this->response->setHeader ( 'HTTP/1.0 500 Internal Server Error' );
@@ -206,10 +207,8 @@ class WebApp extends \BaseApp {
 				} else {
 					$args = array();
 				}
-				$res = $this->response->forward($info['path'], $args);
-				$res->send();
-				$res->sendHeaders();
-				$res->end();
+				$this->response->forward($info['path'], $args);
+				$this->response->send();
 				exit();
 			}
 		}
@@ -300,7 +299,7 @@ class WebApp extends \BaseApp {
 		
 		$basic = array (
 			'ip' => $ip,
-			'uri' => $this->request->url,
+			'uri' => $this->request->rawUri,
 			'logid' => $this->appId . '-' . ($_LessP_appid - $this->appId) 
 		);
 		

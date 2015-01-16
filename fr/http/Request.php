@@ -57,15 +57,28 @@ class Request
 	 */
 	var $clientip = 'undefined';
 	/**
-	 *
+	 * 访问网址。不带查询字符串
 	 * @var string
 	 */
 	var $url = '';
 	/**
-	 *
+	 * 访问网址，带查询字符串
 	 * @var string
 	 */
 	var $uri = '';
+	
+	/**
+	 * 原始查询网址，通过$_SERVER['REQUEST_URI']获取，解决通过rewrite指定网址后跳转的不对应问题
+	 * @var string
+	 * @example
+	 * 
+	 * 比如，在nginx中重写  rewrite /files/share(/.*)$ /index.php?route=/func/share/raw/&url=$1 last;
+	 * 
+	 * 当访问/files/share/index.html时，Request获取到的uri是/func/share/raw/?url=/index.html，而不是/files/share/index.html。
+	 * 
+	 * 因此，跳转时应该通过rawUri来拿原始网址
+	 */
+	var $rawUri = '';
 	
 	/**
 	 * 服务变量

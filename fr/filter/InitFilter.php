@@ -163,12 +163,17 @@ final class InitFilter
 			$app->request->userip = $_SERVER['REMOTE_ADDR'];
 		}
 		$app->request->clientip = $_SERVER['REMOTE_ADDR'];
+		$app->request->rawUri = $_SERVER['REQUEST_URI'];
 		if ( isset($_GET['route']) ) {
 			$app->request->url = $_GET['route'];
-		} elseif (isset($_SERVER['SCRIPT_URL'])) {
-			$app->request->url = $_SERVER['SCRIPT_URL'];
+		} elseif (isset($_SERVER['REQUEST_URI'])) {
+			if ( ($pos = strpos($app->request->rawUri, '?')) !== false ) {
+				$app->request->url = substr($app->request->rawUri, 0, $pos);
+			} else {
+				$app->request->url = $app->request->rawUri;
+			}
 		} else {
-			Exception::notlogin();
+			Exception::notfound();
 		}
 		$app->request->url = '/'.ltrim($app->request->url,'/');
 		unset($_GET['route']);
