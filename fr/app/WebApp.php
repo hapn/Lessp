@@ -180,10 +180,18 @@ class WebApp extends \BaseApp {
 		} else {
 			$isUserEx = true;
 		}
-		if ($errcode === \lessp\fr\util\MSG_NOT_FOUND) {
-			$this->response->setHeader ( 'HTTP/1.0 404 Not Found' );
-		} elseif (! $isUserEx) {
-			$this->response->setHeader ( 'HTTP/1.0 500 Internal Server Error' );
+		switch($errcode) {
+			case \lessp\fr\util\MSG_NOT_FOUND:
+				$this->response->setHeader ( 'HTTP/1.1 404 Not Found' );
+				break;
+			case \lessp\fr\util\MSG_NO_POWER:
+				$this->response->setHeader('HTTP/1.1 401 Unauthorized');
+				break;
+			case \lessp\fr\util\MSG_FATAL:
+				if ( ! $isUserEx ) {
+					$this->response->setHeader('HTTP/1.1 500 Internal Server Error');
+				}
+				break;
 		}
 		if (true === $this->debug) {
 			$this->response->sendHeaders ();
