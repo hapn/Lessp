@@ -148,6 +148,23 @@ class WebApp extends \BaseApp {
 		$this->filterExecutor->loadFilters ( $filters );
 	}
 	
+	private function _setHeader($errcode)
+	{
+		switch($errcode) {
+			case \lessp\fr\util\MSG_NOT_FOUND:
+				$this->response->setHeader ( 'HTTP/1.1 404 Not Found' );
+				break;
+			case \lessp\fr\util\MSG_NO_POWER:
+				$this->response->setHeader('HTTP/1.1 401 Unauthorized');
+				break;
+			case \lessp\fr\util\MSG_FATAL:
+				if ( ! $isUserEx ) {
+					$this->response->setHeader('HTTP/1.1 500 Internal Server Error');
+				}
+				break;
+		}
+	}
+	
 	/**
 	 * 转到错误页面
 	 * @param string $errcode
@@ -180,19 +197,7 @@ class WebApp extends \BaseApp {
 		} else {
 			$isUserEx = true;
 		}
-		switch($errcode) {
-			case \lessp\fr\util\MSG_NOT_FOUND:
-				$this->response->setHeader ( 'HTTP/1.1 404 Not Found' );
-				break;
-			case \lessp\fr\util\MSG_NO_POWER:
-				$this->response->setHeader('HTTP/1.1 401 Unauthorized');
-				break;
-			case \lessp\fr\util\MSG_FATAL:
-				if ( ! $isUserEx ) {
-					$this->response->setHeader('HTTP/1.1 500 Internal Server Error');
-				}
-				break;
-		}
+		
 		if (true === $this->debug) {
 			$this->response->sendHeaders ();
 			echo "<br/>Redirect: <a href='$url'>$url</a><br/>";
@@ -244,6 +249,8 @@ class WebApp extends \BaseApp {
 		$errcode = 'lessp.fatal';
 		$this->endStatus = $errcode;
 		$this->response->setLesspHeader ( $errcode );
+		
+		$this->_setHeader( $errcode );
 		if ($this->request->needErrorPage ()) {
 			$this->_goErrorPage ( $errcode );
 		} else {
@@ -286,6 +293,9 @@ class WebApp extends \BaseApp {
 			}
 		}
 		$this->response->setLesspHeader ( $errcode );
+		
+		$this->_setHeader($errcode);
+		
 		if ($this->request->needErrorPage ()) {
 			$this->_goErrorPage ( $errcode );
 			exit ();

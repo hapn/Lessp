@@ -90,8 +90,6 @@ class DocsController extends Controller
 		$results = $ca->analytic();
 		$this->set('results', $results);
 		
-		$this->set('debugUrl', '/docs/form?url={url}&method={method}');
-		
 		$this->setView(__DIR__.'/tpl/class.phtml');
 	}
 	
