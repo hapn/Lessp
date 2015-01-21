@@ -5,9 +5,9 @@ use lessp\fr\http\Controller;
 /**
  * 
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
- * @file			ActionController.php
+ * @filesource		ActionController.php
  * @author			ronnie<comdeng@live.com>
- * @date			2014-12-23
+ * @since			2014-12-23
  * @version		    1.0
  */
 

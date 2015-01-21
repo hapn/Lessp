@@ -9,7 +9,7 @@ require_once __DIR__.'/Db.php';
 *   @author			ronnie<dengxiaolong@jiehun.com.cn>
 *   @date			2014-12-23
 *   @version		1.0
-*   @description 	事务处理类
+*   @desc 	事务处理类
 */
 
 final class TxScope

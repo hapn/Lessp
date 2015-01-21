@@ -16,9 +16,9 @@ require __DIR__.'/Lunar.php';
 /**
  *
  * @copyright 	Copyright (C) Jiehun.com.cn 2014 All rights reserved.
- * @file 		newfile.php
+ * @filesource 		newfile.php
  * @author 		ronnie<comdeng@live.com>
- * @date 		2014年12月26日上午10:32:20
+ * @since 		2014年12月26日上午10:32:20
  * @version 	1.0
  */
 final class Calendar 

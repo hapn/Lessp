@@ -5,12 +5,12 @@ namespace lessp\fr\api;
 use lessp\fr\db\Db;
 /**
  * 基本的PHP接口基类
- * @file        BaseExport.php
+ * @filesource        BaseExport.php
  * @author      ronnie<comdeng@live.com>
- * @date        2015年1月6日
+ * @since        2015年1月6日
  * @version     1.0
  * @copyright   Copyright (C) cc.nhap 2014 All rights reserved.
- * @description 
+ * @desc 
  * @example     
  */
 

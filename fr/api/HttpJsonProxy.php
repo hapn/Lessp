@@ -4,12 +4,12 @@ namespace lessp\fr\api;
 
 /**
  *  
- * @file        HttpJsonProxy.php
+ * @filesource        HttpJsonProxy.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 使用HttpJson作为协议的代理类
+ * @desc 使用HttpJson作为协议的代理类
  * @example     
  */
 require_once __DIR__.'/HttpJson.php';

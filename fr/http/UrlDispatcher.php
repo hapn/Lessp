@@ -10,12 +10,12 @@ use \lessp\fr\log\Logger;
 use \lessp\fr\util\Exception;
 /**
  *  
- * @file        UrlDispatcher.php
+ * @filesource        UrlDispatcher.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 网址分配器
+ * @desc 网址分配器
  * @example     
  */
 

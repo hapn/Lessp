@@ -9,9 +9,9 @@ require_once __DIR__.'/DbImpl.php';
  * ription 数据库类
  * 
  * @copyright   Copyright (C) Jiehun.com.cn 2014 All rights reserved.
- * @file        Db.php
+ * @filesource        Db.php
  * @author      ronnie<dengxiaolong@jiehun.com.cn>
- * @date        2014-12-23
+ * @since        2014-12-23
  * @version 1.0
  */
 /**

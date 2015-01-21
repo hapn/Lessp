@@ -8,12 +8,12 @@ use \lessp\fr\conf\Conf;
 use lessp\fr\util\Exception;
 /**
  *  
- * @file        InitFilter.php
+ * @filesource        InitFilter.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 初始化的过滤器
+ * @desc 初始化的过滤器
  * @example     
  */
 

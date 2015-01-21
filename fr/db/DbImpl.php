@@ -8,7 +8,7 @@ namespace lessp\fr\db;
 *   @author			ronnie<dengxiaolong@jiehun.com.cn>
 *   @date			2014-12-23
 *   @version		1.0
-*   @description 	数据库实现类
+*   @desc 	数据库实现类
 */
 
 class DbImpl

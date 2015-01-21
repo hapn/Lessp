@@ -6,9 +6,9 @@ namespace lessp\fr\li\calendar;
  * 农历类
  * 
  * @copyright Copyright (C) Jiehun.com.cn 2014 All rights reserved.
- * @file Lunar.php
+ * @filesource Lunar.php
  * @author ronnie<comdeng@live.com>
- * @date 2014年12月26日上午10:35:07
+ * @since 2014年12月26日上午10:35:07
  * @version 1.0
  */
 final class Lunar {

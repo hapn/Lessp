@@ -1,0 +1,334 @@
+<?php if ($this->layout != NULL):?>
+<?=$this->setLayout($this->layout)?>
+<?php endif?>
+
+<style>
+/* jsontree */
+
+/* JSON TREE CSS */
+/* json string right " */
+.json-object-expand:after {
+	content: '+';
+}
+.json-object-collapse:after {
+	content: '-';
+}
+
+/* properties for expand icon */
+.json-object-expand {
+	display: inline-block;
+	font-weight: 500;
+	color: #999;
+	margin-left: 1px;
+	margin-right: 1px;
+	cursor: pointer;
+}
+/* properties for collapse icon */
+.json-object-collapse {
+	display: inline-block;
+	font-weight: 500;
+	color: #999;
+	margin-left: 1px;
+	margin-right: 1px;
+	cursor: pointer;
+}
+/* global properties for json object */
+.json-content {
+	color: #666;
+}
+/* json number style */
+.json-number {
+	color: #D036D0;
+}
+/* json string style */
+.json-string {
+	color: #2DB669;
+}
+/* json boolean style */
+.json-boolean {
+	color: #2525CC;
+}
+/* json null style */
+.json-null {
+	color: gray;
+}
+.json-content {
+    color: #666;
+    font-family: "Lucida Console",Monaco,monospace;
+    font-size: 12px;
+    font-weight: 400;
+}
+.json-property {
+    font-weight: 500;
+}
+.json-object {
+    padding-left: 2em;
+}
+.json-visible {
+    height: auto;
+}
+.json-collapsed {
+    display: none;
+}
+</style>
+
+<?php $method = $this->method;
+	$dParams = array();
+?>
+
+<div class="row">
+	<div class="col-md-6">
+		<h2><?=$this->url?></h2>
+		<p>
+			<?=$method['description']?>
+		</p>
+		
+		<form action="<?=$this->debugUrl?>" method="post">
+			<input type="hidden" name="url" value="<?=$this->url?>"/>
+			<input type="hidden" name="method" value="<?=$method['name']?>"/>
+			<table class="table table-striped table-condensed">
+				<thead>
+					<tr>
+						<th width="15%">名称</th>
+						<th width="15%">类型</th>
+						<th>值</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach($method['param'] as $param):?>
+					<tr>
+						<th valign="top"><?=$param['name']?></th>
+						<th valign="top"><?=$param['type']?></th>
+						<td>
+							<?php if( $param['type'] == 'array' || !empty($param['isArray']) || is_array($param['default'])):?>
+								<script type="text/x-tmpl" id="tmpl_<?=$param['name']?>">
+												<li>
+												<div class="row">
+													<div class="col-md-4">
+														<input type="text" name="param[<?=$param['name']?>][][key]" placeholder="键" class="form-control"/>
+													</div>
+													<div class="col-md-8">
+														<div class="input-group">
+															<input type="text" name="param[<?=$param['name']?>][][value]" placeholder="值" class="form-control"/>
+															<a class="glyphicon glyphicon-minus input-group-addon"></a>
+														</div>
+													</div>
+												</div>
+												</li>
+											</script>
+								<ul class="ul_params"></ul>
+								<div class="text-right">
+									<a class="glyphicon glyphicon-plus" data-name="<?=$param['name']?>"></a>
+								</div>
+							<?php 
+								else:
+									switch($param['type']) {
+										case 'int':
+										case 'number':
+											$iptType = 'number';
+											break;
+										case 'bool':
+										case 'boolean':
+											$iptType = 'radio';
+											break;	
+										default:
+											$iptType = 'text';
+											break;
+									}
+									if ($iptType != 'radio'):
+									
+										if (!$param['default']) {
+											if (isset($dParams[$param['name']])) {
+												$param['default'] = $dParams[$param['name']];
+												unset($dParams[$param['name']]);
+											}
+										}
+										if (is_scalar($param['default'])) {
+											$defaultValue = $param['default'];
+										} else {
+											$defaultValue = var_export($param['default'], true);
+										}
+										if ($defaultValue === 'NULL') {
+											$defaultValue = '';
+										}
+							?>
+									<input type="<?=$iptType?>" <?=$param['optional'] ? '' : ' required="required"'?> class="form-control" name="param[<?=$param['name']?>]" value="<?=$defaultValue?>"/>
+								<?php else:?>
+								
+									<div class="btn-group" data-toggle="buttons">
+									  <label class="btn btn-sm btn-default<?=$param['default'] ? ' active' : ''?>">
+									    <input type="radio" <?=$param['optional'] ? '' : ' required="required"'?> autocomplete="off" <?=$param['default'] ? 'checked' : ''?> name="param[<?=$param['name']?>]" value="1"/> 是
+									  </label>
+									  <label class="btn btn-sm btn-default<?=$param['default'] ? '' : ' active'?>">
+									    <input type="radio" <?=$param['optional'] ? '' : ' required="required"'?> autocomplete="off" <?=$param['default'] ? '' : 'checked'?> name="param[<?=$param['name']?>]" value="0"/> 否
+									  </label>
+									</div>
+									
+								<?php endif?>
+							<?php endif?>
+							<div>
+							<small class="text-muted"><?=$param['desc']?></small>
+							</div>
+						</td>
+					</tr>
+					<?php endforeach?>
+					<?php foreach($dParams as $key => $value):
+						if (!is_scalar($value)) continue;
+					?>
+					<tr>
+						<th valign="top"><?=$key?></th>
+						<th valign="top"></th>
+						<th valign="top">
+							<input type="text" name="param[<?=$key?>]" class="form-control" value="<?=$value?>"/>
+						</th>
+					</tr>
+					<?php endforeach?>
+					<tr>
+						<td></td>
+						<td></td>
+						<td>
+							<input type="submit" value="提交" class="btn btn-primary"/>
+							<input type="checkbox" id="fullscreen"<?php if(!empty($_COOKIE['_fs_'])):?> checked<?php endif?>/> <label for="fullscreen">全屏查看结果</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+		
+		<div id="debugParams" class="panel panel-default">
+			<div class="panel-heading">
+				输入参数
+			</div>
+			<div class="panel-body" style="height:230px;overflow-y:auto;" >
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-6">
+		<div id="debugResult" class="panel panel-primary">
+			<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-10">
+						输出结果
+					</div>
+					<div class="col-md-2 text-right">
+						<label class="glyphicon glyphicon-resize-full" style="cursor:pointer;" title="全屏"></label>
+					</div>
+				</div>
+			</div>
+			<div class="panel-body"style="height:545px;overflow-y:auto;" >
+				</div>
+			</div>
+		</div>
+	</div>
+
+<div id="debugResultBig" class="panel panel-primary" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 9999; display: none;">
+	<div class="panel-heading text-right">
+		按ESC退出全屏
+		<label class="glyphicon glyphicon-resize-small" style="cursor: pointer" title="关闭"></label>
+	</div>
+
+	<div class="panel-body">
+		<ul class="nav nav-tabs" role="tablist">
+			<li role="presentation"><a href="#tabInput" role="tab"
+				data-toggle="tab">输入参数</a></li>
+			<li role="presentation" class="active"><a href="#tabOutput"
+				role="tab" data-toggle="tab">输出参数</a></li>
+		</ul>
+	
+		<!-- Tab panes -->
+		<div class="tab-content">
+			<div role="tabpanel" class="tab-pane" id="tabInput">
+				<div class="panel-body _input_params"></div>
+			</div>
+			<div role="tabpanel" class="tab-pane active" id="tabOutput">
+				<div class="panel-body _output_params"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+//JSONTree 0.1.7
+function JSONTree(){}JSONTree.id=0,JSONTree.random=0,JSONTree.escapeMap={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#x27;","/":"&#x2F;"},JSONTree.escape=function(e){return e.replace(/[&<>'"]/g,function(e){return JSONTree.escapeMap[e]})},JSONTree.create=function(e){return JSONTree.id=0,JSONTree.random=Math.random(),JSONTree.div(JSONTree.jsValue(e),{"class":"json-content"})},JSONTree.newId=function(){return JSONTree.id+=1,JSONTree.random+"_"+JSONTree.id},JSONTree.div=function(e,r){return JSONTree.html("div",e,r)},JSONTree.span=function(e,r){return JSONTree.html("span",e,r)},JSONTree.html=function(e,r,n){var o="<"+e;return null!=n&&Object.keys(n).forEach(function(e){o+=" "+e+'="'+n[e]+'"'}),o+=">"+r+"</"+e+">"},JSONTree.collapseIcon=function(e){var r={onclick:"JSONTree.toggleVisible('collapse_json"+e+"')"};return JSONTree.span(JSONTree.collapse_icon,r)},JSONTree.jsValue=function(e){if(null==e)return JSONTree.jsText("null","null");var r=typeof e;if("boolean"===r||"number"===r)return JSONTree.jsText(r,e);if("string"===r)return JSONTree.jsText(r,'"'+JSONTree.escape(e)+'"');var n=JSONTree.newId();return e instanceof Array?JSONTree.jsArray(n,e):JSONTree.jsObject(n,e)},JSONTree.jsObject=function(e,r){var n="{"+JSONTree.collapseIcon(e),o="";return Object.keys(r).forEach(function(e,n,s){o+=JSONTree.div(n==s.length-1?JSONTree.jsProperty(e,r[e]):JSONTree.jsProperty(e,r[e])+",")}),n+=JSONTree.div(o,{"class":"json-visible json-object",id:"collapse_json"+e}),n+="}"},JSONTree.jsProperty=function(e,r){return JSONTree.span('"'+JSONTree.escape(e)+'"',{"class":"json-property"})+" : "+JSONTree.jsValue(r)},JSONTree.jsArray=function(e,r){for(var n="["+JSONTree.collapseIcon(e),o="",s=0;s<r.length;s++)o+=JSONTree.div(s==r.length-1?JSONTree.jsValue(r[s]):JSONTree.jsValue(r[s])+",");return n+=JSONTree.div(o,{"class":"json-visible json-object",id:"collapse_json"+e}),n+="]"},JSONTree.jsText=function(e,r){return JSONTree.span(r,{"class":"json-"+e})},JSONTree.toggleVisible=function(e){for(var r=document.getElementById(e),n=r.className,o=n.split(" "),s=!1,t=0;t<o.length;t++)if("json-visible"===o[t]){s=!0;break}r.className=s?"json-collapsed json-object":"json-object json-visible",r.previousSibling.innerHTML=s?JSONTree.expand_icon:JSONTree.collapse_icon},JSONTree.configure=function(e,r){JSONTree.collapse_icon=e,JSONTree.expand_icon=r},JSONTree.collapse_icon=JSONTree.span("",{"class":"json-object-collapse"}),JSONTree.expand_icon=JSONTree.span("",{"class":"json-object-expand"});
+</script>
+<script>
+	$('#fullscreen').click(function(){
+		if (this.checked) {
+			document.cookie = '_fs_=1';
+		} else {
+			document.cookie = '_fs_=deleted';
+		}
+	});
+
+	function resize() {
+		var docHeight = $(window).height();
+		$('#debugResult').height(docHeight - 85);
+		$('#debugParams').height(docHeight - 430);
+	}
+	$(window).resize(resize);
+	resize();
+	$('.glyphicon-plus').click(function(){
+		var self = $(this),
+			name = self.data('name'),
+			html = $('#tmpl_' + name).html();
+		self.parent().prev().append(html);
+	});
+	$('.ul_params').delegate('.glyphicon-minus', 'click', function(){
+		$(this).parents('li').remove();
+	});
+
+	var fs = $('#fullscreen')[0];
+	$('form').submit(function(){
+		$.post(this.action, $(this).serialize(), function(ret){
+			showResult(ret.data.output);
+			if (fs.checked) {
+				showBig();
+			}
+		}).error(function(ret) { 
+			pnlResult.html(ret.responseText);
+			if (fs.checked) {
+				showBig();
+			}
+		});
+		return false;
+	});
+
+	var pnlParams = $('#debugParams .panel-body'), 
+		pnlResult = $('#debugResult .panel-body');
+	
+	function showResult(ret) {
+		pnlParams.html(JSONTree.create(ret.inputs));
+
+		if (ret.outputs.err == 'ok') {
+			pnlResult.html(JSONTree.create(ret.outputs.data));
+		} else {
+			pnlResult.html(ret.outputs.data);
+		}
+	}
+
+	var bigElem = $('#debugResultBig'),smElem = $('#debugResult');
+
+	function showBig()
+	{
+		bigElem.find('._input_params').html($('#debugParams').find('.panel-body').html());
+		bigElem.find('._output_params').html(smElem.find('.panel-body').html());
+		bigElem.show();
+		var docHeight = $(document).height();
+		if (bigElem.height() < docHeight) {
+			bigElem.height(docHeight);
+		}
+	}
+
+	smElem.find('.glyphicon-resize-full').click(showBig);
+	bigElem.find('.glyphicon-resize-small').click(function(){
+		bigElem.hide();
+	});
+
+	$(document).bind('keyup', function(e){
+		if (e.keyCode == 27) {
+			bigElem.hide();
+		}
+	});
+
+</script>

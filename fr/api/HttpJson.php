@@ -4,12 +4,12 @@ namespace lessp\fr\api;
 
 /**
  *  
- * @file        HttpJson.php
+ * @filesource        HttpJson.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description HttpJson请求类
+ * @desc HttpJson请求类
  * @example
  * 请求的Url格式为http://{host:port}/{urlPrefix}/{mod}?{urlSuffix}
  * 具体要求如下：

@@ -7,12 +7,12 @@ use \lessp\fr\app\WebApp;
 use \lessp\fr\conf\Conf;
 /**
  *  
- * @file        OutputFilter.php
+ * @filesource        OutputFilter.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 输出处理的过滤器
+ * @desc 输出处理的过滤器
  * @example     
  */
 

@@ -3,12 +3,12 @@
 namespace lessp\fr\log;
 /**
  *  
- * @file        Log.php
+ * @filesource        Log.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 日志抽象实现
+ * @desc 日志抽象实现
  * @example     
  */
 

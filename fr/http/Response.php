@@ -6,12 +6,12 @@ use \lessp\fr\app\WebApp;
 use \lessp\fr\conf\Conf;
 /**
  *  
- * @file        Response.php
+ * @filesource        Response.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 
+ * @desc 
  * @example     
  */
 
@@ -199,6 +199,7 @@ class Response
 	function buildView($template, $userData, $output = false)
 	{
 		$engine = Conf::get('lessp.view', 'PhpView');
+		$viewRoot = Conf::get('lessp.view.root', PAGE_ROOT);
 		$clsName = "\\lessp\\fr\\view\\".$engine;
 		
 		$this->app->timer->begin($engine);
@@ -214,6 +215,7 @@ class Response
 		$view->init(array(
 			'viewNs' 	=> $this->app->ns,
 			'request' 	=> $this->app->request,
+			'viewRoot'	=> $viewRoot,
 		));
 		$view->sets($userData);
 		if (!$output) {

@@ -6,11 +6,11 @@ use \lessp\fr\log\Logger;
 
 /**
  * 
- * @file 		IFilter.php
+ * @filesource 		IFilter.php
  * @author 		ronnie
- * @date 		2014-12-21
+ * @since 		2014-12-21
  * @version 	1.0
- * @description 过滤器的接口定义
+ * @desc 过滤器的接口定义
  *
  **/
 interface IFilter
@@ -20,12 +20,12 @@ interface IFilter
 
 /**
  *  
- * @file        FilterExcutor.php
+ * @filesource        FilterExcutor.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 
+ * @desc 
  * @example     
  */
 class FilterExecutor

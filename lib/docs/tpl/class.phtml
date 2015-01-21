@@ -1,0 +1,168 @@
+<?php if ($this->layout != NULL):?>
+<?=$this->setLayout($this->layout)?>
+<?php endif?>
+<h1>接口文档</h1>
+<div class="row">
+	<div class="col-md-2">
+		<?php include __DIR__.'/nav.phtml'?>
+	</div>
+	
+	<div class="col-md-10">
+		<h2><?=$this->url?></h2>
+		<?php 
+
+		$classInfo = $this->results['class'];
+		foreach(array('description', 'example') as $key) {
+			unset($classInfo[$key]);
+		}
+		
+		if (!empty($classInfo)):
+	?>
+		<div><a class="glyphicon glyphicon-chevron-down text-primary" id="lnkDetail" href=""> 详细</a></div>
+		<table class="table table-striped table-condensed hide">
+		<?php 
+		foreach($classInfo as $key => $value):
+		?>
+			<tr>
+				<td class="text-right text-warning" width="80"><?=$key?></td>
+				<td><?=implode('<br/>', $value)?></td>
+			</tr>
+		<?php endforeach ?>
+		</table>
+		<script>
+			!function($) {
+				var lnk = $('#lnkDetail'), tb = lnk.parent('div').next('table');
+				lnk.click(function(){
+					if (tb.hasClass('hide')) {
+						tb.removeClass('hide');
+						lnk.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+					} else {
+						tb.addClass('hide');
+						lnk.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+					}
+					return false;
+				});
+			}(jQuery);
+		</script>
+	<?php endif?>
+	
+	<?php if (!empty($this->results['methods'])):
+		$methods = $this->results['methods'];
+	?>
+	<h3>函数列表</h3>
+	<ol>
+		<?php 
+		foreach($methods as $method):
+		?>
+		<li id="method_<?=$method['name']?>">
+			<div class="panel panel-warning">
+			  <div class="panel-heading">
+			  	<div class="row">
+			    	<h4 class="col-md-10"><strong><?php if ($this->v['acType'] == 2):?>/<?=implode('/', $this->v['namespace'])?>/<?php endif?><?=$method['name']?></strong></h4>
+			    	<div class="col-md-2 text-right">
+			    	<?php if ($this->debugUrl !== NULL):
+			    		$url = preg_replace(array('#\{url\}#', '#\{method\}#'), array($this->url, $method['name']), $this->debugUrl);
+			    	?>
+			    		<a target="_blank" class="glyphicon glyphicon-wrench" style="padding-top:10px;" href="<?=$url?>">测试</a>
+			    	<?php endif?>
+			    	</div>
+			    </div>
+			  </div>
+			  <div class="panel-body">
+			    <p><?=$method['description']?></p>
+			    
+				<?
+					$keys = array_keys($method);
+					$keys = array_diff($keys, array('description', 'name', 'param', 'return', 'throws'));
+					if ($keys):
+				?>
+				<?php foreach($keys as $key):?>
+				<div style="line-height:24px;">
+					<label class=" label label-info"><?=$key?></label>
+					<span class="text-muted small"><?=implode("<br/>",$method[$key])?></span>
+				</div>
+				<?php endforeach?>
+				<?endif?>
+				
+				<?php if (!empty($method['throws'])):?>
+				<label class="label label-info">异常：</label>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th class="col-md-4">代码</th>
+							<th class="col-md-8">说明</th>
+						</tr>
+					</thead>
+					<tbody>
+				<?foreach($method['throws'] as $throw):
+				?>
+					<tr>
+					<td class="col-md-4 text-danger"><?=$throw['code']?></td>
+					<td class="col-md-8"><?=$throw['desc']?></td>
+					</tr>
+				<?endforeach?>
+					</tbody>
+				</table>
+				<?php endif?>
+				
+				<? if(!empty($method['param'])):?>
+				<label class="label label-info">输入参数：</label>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th class="col-md-2">名称</th>
+							<th class="col-md-2">类型</th>
+							<th class="col-md-1">必填</th>
+							<th class="col-md-2">默认值</th>
+							<th class="col-md-5">备注</th>
+						</tr>
+					</thead>
+					<tbody>
+				<?foreach($method['param'] as $param):
+					if (!$param['name']) {
+						continue;
+					}
+					if ($param['name'][0] == '$') {
+						$key = substr($param['name'], 1);
+					} else {
+						$key = $param['name'];
+					}
+				?>
+					<tr>
+					<td class="text-danger"><?=$key?></td>
+					<td><?=$param['type']?></td>
+					<td>
+					<?php if (!$param['optional']):?>
+					<span class="glyphicon glyphicon-ok text-success col-md-offset-1"></span>
+					<?php else:?>
+					否
+					<?php endif?>
+					</td>
+					<td><?=$param['default'] !== NULL ? (is_scalar($param['default']) ? $param['default'] : var_export($param['default'], true)) : ''?></td>
+					<td><?=$param['desc']?></td>
+					</tr>
+				<?endforeach?>
+					</tbody>
+				</table>
+				<?endif?>
+				
+				<? if(!empty($method['return'])):?>
+				<h5 class="label label-info">输出参数 </h5>
+				<div class="row">
+					<div class="col-md-1 text-right">格式</div>
+					<div class="col-md-2"><?=$method['return']['type']?></div>
+					<div class="col-md-9"><?=implode('<br/>', $method['return']['desc'])?></div>
+				</div>
+				
+				<?if(!empty($method['return']['detail'])):?>
+				<?=($method['return']['detail'])?>
+				<?endif?>
+				<? endif?>
+				</div>
+			</div>
+		</li>
+		<?php endforeach?>
+	</ol>
+	<?php endif ?>
+	</div>
+</div>

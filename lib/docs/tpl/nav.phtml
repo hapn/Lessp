@@ -1,0 +1,21 @@
+<ul>
+	<?php foreach($this->navs['subs'] as $nav):
+		$url = str_replace('{url}', $nav['name'], $this->docsUrl);
+	?>
+	<li<?=($this->url == $nav['name'] ? ' class="bg-info"' : '')?>>
+		<a href="<?=$url?>"><?=$nav['name']?></a>
+		<?php if (!empty($nav['subs'])):?>
+		<ul>
+			<?php foreach($nav['subs'] as $cnav):
+				if (empty($cnav['name'])) continue;
+				$url = str_replace('{url}', $cnav['name'], $this->docsUrl);
+			?>
+			<li<?=($this->url == $cnav['name'] ? ' class="bg-info"' : '')?>>
+				<a href="<?=$url?>"><?php echo $cnav['name']?></a>
+			</li>
+			<?php endforeach?>
+		</ul>
+		<?php endif?>
+	</li>
+	<?php endforeach?>
+</ul>

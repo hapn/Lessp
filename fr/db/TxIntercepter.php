@@ -9,7 +9,7 @@ use lessp\fr\db\TxScope;
 *   @author			ronnie<dengxiaolong@jiehun.com.cn>
 *   @date			2014-12-23
 *   @version		1.0
-*   @description 
+*   @desc 
 */
 
 require_once __DIR__.'/Db.php';

@@ -1,12 +1,12 @@
 <?php
 /**
  *  
- * @file        BaseApp.php
+ * @filesource        BaseApp.php
  * @author      ronnie<comdeng@live.com>
- * @date        2014-12-21
+ * @since        2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
- * @description 
+ * @desc 
  */
 
 use \lessp\fr\util\Timer;

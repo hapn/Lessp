@@ -8,12 +8,12 @@ use lessp\fr\util\Exception;
 require_once __DIR__ . '/BaseApp.php';
 
 /**
- * @file 		WebApp.php
+ * @filesource 		WebApp.php
  * @author 		ronnie<comdeng@live.com>
- * @date 		2014-12-21
+ * @since 		2014-12-21
  * @version 	1.0
  * @copyright 	Copyright (C) cc.lessp 2014 All rights reserved.
- * @description web的基本app
+ * @desc web的基本app
  * @example
  *
  */
@@ -210,6 +210,7 @@ class WebApp extends \BaseApp {
 				$this->response->sendHeaders ();
 				exit ();
 			} else {
+				Conf::set('lessp.view.root', PAGE_ROOT);
 				if (isset($info['query'])) {
 					parse_str($info['query'], $args);
 				} else {
