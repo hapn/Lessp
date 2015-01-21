@@ -130,7 +130,6 @@ class DocsController extends Controller
 		}
 		
 		$this->set('method', $result);
-		$this->set('debugUrl', '/docs/_debug');
 		
 		$this->setView(__DIR__.'/tpl/form.phtml');
 	}
