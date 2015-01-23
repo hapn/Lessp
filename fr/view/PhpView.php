@@ -67,7 +67,7 @@ final class PhpView implements IView
 		$this->_request = $conf['request'];
 		
 		$this->_viewRoot = isset($conf['viewRoot']) ? $conf['viewRoot'] : PAGE_ROOT;
-		$this->_helperRoot = isset($conf['viewRoot']) ? $conf['viewRoot'] : PLUGIN_ROOT.'helper/';
+		$this->_helperRoot = isset($conf['helperRoot']) ? $conf['helperRoot'] : PLUGIN_ROOT.'/helper/';
 		$this->_cacheRoot = isset($conf['cacheRoot']) ? $conf['cacheRoot'] : TMP_ROOT.'zendview/';
 		$this->_tplExt = isset($conf['tplExt']) ? $conf['tplExt'] : 'phtml';
 	}
