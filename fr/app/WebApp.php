@@ -158,7 +158,7 @@ class WebApp extends \BaseApp {
 				$this->response->setHeader('HTTP/1.1 401 Unauthorized');
 				break;
 			case \lessp\fr\util\MSG_FATAL:
-				if ( ! $isUserEx ) {
+				if ( !($this->isUserErr($errcode)) ) {
 					$this->response->setHeader('HTTP/1.1 500 Internal Server Error');
 				}
 				break;
@@ -186,7 +186,6 @@ class WebApp extends \BaseApp {
 			$domain = 'http://' . $domain;
 		}
 		$url = str_replace ( '[url]', urlencode ( $domain . $this->request->rawUri ), $url );
-		$isUserEx = false;
 		if (! $this->isUserErr ( $errcode ) && ! is_file ( $url )) {
 			$di = base64_encode ( 'ip=' . $this->request->userip . ':time=' . $this->request->now . ':id=' . $this->appId );
 			if (strpos ( $url, '?' ) !== false) {
@@ -194,8 +193,6 @@ class WebApp extends \BaseApp {
 			} else {
 				$url .= '?di=' . $di;
 			}
-		} else {
-			$isUserEx = true;
 		}
 		
 		if (true === $this->debug) {
