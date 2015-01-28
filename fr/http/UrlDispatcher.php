@@ -273,7 +273,17 @@ class UrlDispatcher
 			if (is_callable(array($controller, '_after'))) {
 				call_user_func(array($controller, '_after'));
 			}
-			throw $ex;
+			if ($this->mode !== DISPATCH_MODE_PARTIAL) {
+				throw $ex;
+			} else {
+				trigger_error($ex->getMessage()."\n".$ex->getTraceAsString(), E_USER_ERROR);
+				if ($this->app->debug) {
+					return $ex->getMessage()."\n".nl2br($ex->getTraceAsString());
+				} else {
+					return '<!--'.$ex->getMessage().'-->';
+				}
+				
+			}
 		}
 		
 		if (is_callable(array($controller, '_after'))) {
