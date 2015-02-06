@@ -150,7 +150,7 @@ class DocsController extends Controller
 					$key = '';
 					$values = array();
 					while ( ($item = array_shift($value)) !== NULL ) {
-						if ( ! $key ) {
+						if ( $key === NULL || $key === '' ) {
 							if ( isset($item['key']) ) {
 								$key = $item['key'];
 							}

@@ -93,6 +93,17 @@ class Response
 	}
 	
 	/**
+	 * 批量设置变量
+	 * @param array $kvs
+	 */
+	function sets(array $kvs)
+	{
+		foreach($kvs as $k => $v) {
+			$this->outputs[$k] = $v;
+		}
+	}
+	
+	/**
 	 * 清理指定的键，使其不输出
 	 * @param string $key 如果不传入任何值，则清除掉所有的设置。 如果传入内容，可以是单个key，或者数组，或者多参数传入
 	 */
