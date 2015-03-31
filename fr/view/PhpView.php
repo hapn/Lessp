@@ -1,11 +1,7 @@
 <?php
 
-namespace lessp\fr\view;
-
-use \lessp\fr\app\WebApp;
-use \lessp\fr\http\UrlDispatcher;
 require_once __DIR__.'/IView.php';
-require_once __DIR__.'/Helper.php';
+require_once __DIR__.'/ViewHelper.php';
 require_once FR_ROOT.'http/UrlDispatcher.php';
 
 /**
@@ -38,12 +34,6 @@ final class PhpView implements IView
 	private $_renderLayout;
 	
 	/**
-	 * 命名空间
-	 * @var string
-	 */
-	private $_viewNs;
-	
-	/**
 	 * 模板位置
 	 * @var string
 	 */
@@ -53,15 +43,11 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::init()
+	 * @see IView::init()
 	 */
 	function init(array $conf = array())
 	{
-		if (!isset($conf['viewNs'])) {
-			throw new \Exception('zendview.viewNsRequired');
-		}
-		$this->_viewNs = rtrim($conf['viewNs'], '\\');
-		if (!isset($conf['request']) || !($conf['request'] instanceof \lessp\fr\http\Request)) {
+		if (!isset($conf['request']) || !($conf['request'] instanceof HttpRequest)) {
 			throw new \Exception('zendview.requestIllegal');
 		}
 		$this->_request = $conf['request'];
@@ -74,7 +60,7 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::sets()
+	 * @see IView::sets()
 	 */
 	function sets(array $arr)
 	{
@@ -83,7 +69,7 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::set()
+	 * @see IView::set()
 	 */
 	function set($key, $value)
 	{
@@ -92,7 +78,7 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::setLayout()
+	 * @see IView::setLayout()
 	 */
 	function setLayout($layout, $args = array())
 	{
@@ -102,7 +88,7 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::clear()
+	 * @see IView::clear()
 	 */
 	function clear()
 	{
@@ -130,7 +116,7 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::render()
+	 * @see IView::render()
 	 */
 	function fetch($template)
 	{
@@ -161,7 +147,7 @@ final class PhpView implements IView
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\view\IView::fetch()
+	 * @see IView::fetch()
 	 */
 	function render($template)
 	{
@@ -180,7 +166,7 @@ final class PhpView implements IView
 		// 检测是partial的phtml还是Pagelet
 		$isPagelet = substr($template, - (strlen($this->_tplExt) + 1)) != '.'.$this->_tplExt;
 		
-		$dispatcher = new UrlDispatcher(NULL, \lessp\fr\http\DISPATCH_MODE_PARTIAL);
+		$dispatcher = new UrlDispatcher(NULL, DISPATCH_MODE_PARTIAL);
 		return $dispatcher->dispatch($template, $args);
 	}
 	
@@ -241,14 +227,14 @@ final class PhpView implements IView
 			$file = $this->_helperRoot.$name.'.php';
 			if (is_readable($file)) {
 				$found = true;
-				$className = $this->_viewNs.'\\helper\\'.$name;
+				$className = 'ViewHelper_'.$name;
 			}
 		} 
 		if (!$found) {
 			$file = __DIR__.'/helper/'.$name.'.php';
 			if (is_readable($file)) {
 				$found = true;
-				$className = __NAMESPACE__.'\\helper\\'.$className;
+				$className = $className;
 			}
 		}
 		if (!$found) {

@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\fr\db;
-
 /**
 *   @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
 *   @file			DbImpl.php
@@ -18,7 +16,6 @@ class DbImpl
 	private $dbname;
 	private $foundRows = 0;
 	private $table = NULL;
-	private $object = NULL;
 	private $where = NULL;
 	private $between = NULL;
 	private $like = NULL;
@@ -52,7 +49,6 @@ class DbImpl
 	
 	private function initDbBase() {
 		$this->table = NULL;
-		$this->object = NULL;
 		$this->where = NULL;
 		$this->between = NULL;
 		$this->like = NULL;
@@ -506,28 +502,21 @@ class DbImpl
 	function commit() { $this->dbimpl->commit(); }
 	function rollback() { $this->dbimpl->rollback(); }
 	
-	/*
+	/**
 	 * 设置表名
-	*/
+	 * @return DbImpl
+	 */
 	public function table($table) {
 		$this->initDbBase();
 		$this->table = $table;
 		return $this;
 	}
 	
-	/*
-	 * 设置对象名
-	*/
-	public function object($class) {
-		$this->initDbBase();
-		$this->object = new $class();
-		$this->table = $this->object->table;
-		return $this;
-	}
-	/*
+	/**
 	 * 设置where条件
-	* @params $arr_where array(key=>value)或者"key=value"
-	*/
+	 * @params $arr_where array(key=>value)或者"key=value"
+	 * @return DbImpl
+	 */
 	public function where($arr_where) {
 		$this->checkDbTable();
 		if ($this->where) {
@@ -553,6 +542,10 @@ class DbImpl
 	
 	/**
 	 * 设置sql的between子句
+	 * @param string $field
+	 * @param int $min
+	 * @param int $max
+	 * @return DbImpl
 	 */
 	public function between($field, $min, $max)
 	{
@@ -563,6 +556,9 @@ class DbImpl
 	
 	/**
 	 * 设置sql的like子句, like '%value%'
+	 * @param string $field
+	 * @param string $value
+	 * @return DbImpl
 	 */
 	public function like($field, $value)
 	{
@@ -570,9 +566,13 @@ class DbImpl
 		return $this;
 	}
 	
-	/*
+	/**
 	 * 设置in条件，前一个参数为in字段名，仅支持一个字符串；后一个字段为取值数组
-	*/
+	 * @param string $in
+	 * @param array $arr_in_value
+	 * @throws \Exception
+	 * @return DbImpl
+	 */
 	public function in($in, $arr_in_value) {
 		$this->checkDbTable();
 		if(empty($in) || empty( $arr_in_value ) || !is_array( $arr_in_value )) {
@@ -582,12 +582,13 @@ class DbImpl
 		$this->in_v = $arr_in_value;
 		return $this;
 	}
-	/*
+	
+	/**
 	 * 设置查询order条件。
-	* @params $order 排序设置，可以是字段名，可以可以是整个order子句
-	*   例如: "id asc,time desc"
-	* @params $asc 升序还是降序 true/false，如果设置为null,是认为$order参数为排序子句
-	*/
+	 * @param $order 排序设置，可以是字段名，可以可以是整个order子句  例如: "id asc,time desc"
+	 * @param $asc 升序还是降序 true/false，如果设置为null,是认为$order参数为排序子句
+	 * @return DbImpl
+	 */
 	public function order($order, $asc = true) {
 		$this->checkDbTable();
 		$this->order = $order;
@@ -597,16 +598,19 @@ class DbImpl
 	/**
 	 * [group 设置查询的group by条件]
 	 * @param  [string] $fields [字段名，可以是多个]
-	 * @return [object]         [DB对象]
+	 * @return DbImpl
 	 */
 	public function group($fields) {
 		$this->checkDbTable();
 		$this->group = $fields;
 		return $this;
 	}
-	/*
+	
+	/**
 	 * 设置查询field，支持数组或字符串
-	*/
+	 * @param array|string $arr_field
+	 * @return DbImpl
+	 */
 	public function field($arr_field) {
 		$this->checkDbTable();
 		if(! is_array( $arr_field )) {
@@ -615,30 +619,30 @@ class DbImpl
 		$this->field = $arr_field;
 		return $this;
 	}
-	/*
+	
+	/**
 	 * 设置查询limit,必须整数
-	*/
+	 * @param int $start
+	 * @param int $limit
+	 * @throws \Exception
+	 * @return DbImpl
+	 */
 	public function limit($start, $limit) {
 		$this->checkDbTable();
 		$start = intval($start);
 		$limit = intval($limit);
-		if(-1 >= $start && 0 >= $limit)
+		if(-1 >= $start && 0 >= $limit) {
 			throw new \Exception( "db.LimitParam:$start Error" );
+		}
 		$this->start = $start;
 		$this->limit = $limit;
 		return $this;
 	}
 	
 	/**
-	 * @deprecated This function is deprecated, pls use saveBody instead.
-	 */
-	public function save($arr_save) {
-		return $this->saveBody($arr_save);
-	}
-	
-	/**
 	 * 设置更新字段数组
-	 * @params $arr_save array  key=>value格式
+	 * @param $arr_save array  key=>value格式
+	 * @return DbImpl
 	 */
 	public function saveBody($arr_save){
 		$this->checkDbTable();
@@ -648,6 +652,7 @@ class DbImpl
 		$this->save = $arr_save;
 		return $this;
 	}
+	
 	private function parseField($fields)
 	{
 		if (is_string($fields)) {
@@ -665,8 +670,11 @@ class DbImpl
 		}
 		throw new \Exception('db.FieldNotSupport');
 	}
+	
 	/**
 	 * 设置需要分配guid的字段
+	 * @param string $field
+	 * @return DbImpl
 	 */
 	public function unique($field) {
 		$this->checkDbTable();
@@ -674,11 +682,11 @@ class DbImpl
 		return $this;
 	}
 	
-	/*
+	/**
 	 * 设置分表属性和分库方法
-	* @params $split_value mixed 分表字段值
-	* @params $split 分表设置
-	*/
+	 * @param string $split_value  分表字段值
+	 * @param array $split 分表设置
+	 */
 	public function tsplit($split_value, $split){
 		$this->checkDbTable();
 		if(!empty($split_value)){
@@ -733,16 +741,19 @@ class DbImpl
 	
 	/**
 	 * 执行插入
+	 * @return multitype:NULL
 	 */
 	public function insert() {
 		return $this->executeUpdate('insert');
 	}
+	
 	/**
 	 * 执行更新
 	 */
 	public function update() {
 		return $this->executeUpdate('update');
 	}
+	
 	/**
 	 * 执行插入。INSERT IGNORE INTO模式
 	 */
@@ -778,8 +789,6 @@ class DbImpl
 	 */
 	public function delete() {
 		return $this->executeUpdate('delete');
-		//$this->initDbBase();
-		//throw new \Exception( "db.SystaNotSupportDeleteAction" );
 	}
 	
 	/**
@@ -822,8 +831,23 @@ class DbImpl
 	}
 	
 	/**
+	 * 获取一个单一的对象
+	 * @return array|boolean
+	 */
+	public function getOne()
+	{
+		$rows = $this->get();
+		if ($rows) {
+			return array_shift($rows);
+		}
+		return false;
+	}
+	
+	/**
 	 * 执行一个常规的查询操作.查询参数就是通过where in limit order等接口所设置的
-	 * @params boolean | int $calc_found_rows 是否统计受影响行数，默认通过另外查询一次计算得出，要使用SQL_CALC_FOUND_ROWS得明确使用2
+	 * @param boolean $calc_found_rows 是否统计受影响行数，默认通过另外查询一次计算得出，要使用SQL_CALC_FOUND_ROWS得明确使用2
+	 * @param boolean $forupdate 是否锁定该条记录
+	 * @return array
 	 */
 	public function get($calc_found_rows=false,$forupdate=false) {
 		$this->foundRows = 0;
@@ -844,20 +868,8 @@ class DbImpl
 			}
 		}
 		$result = $results[0]['fields'];
-		if(empty( $this->object )) {
-			$this->initDbBase();
-			return $result;
-		} else {
-			$arr_object = array();
-			foreach( $result as $arr_res_item ) {
-				$object_res = clone $this->object;
-				$object_res->arrValue = $arr_res_item;
-				$object_res->__hit__ = true;
-				$arr_object [] = $object_res;
-			}
-			$this->initDbBase();
-			return $arr_object;
-		}
+		$this->initDbBase();
+		return $result;
 	}
 	
 	private function formatData(&$ret)
@@ -951,24 +963,5 @@ class DbImpl
 		$ret = $this->dbimpl->query($sql);
 		$this->initDbBase();
 		return !empty($ret[0]['fields'][0]);
-	}
-	
-	private function prepareOSplit($object,$genguid=false)
-	{
-		if(empty($object->tbSpProperty)){
-			return;
-		}
-		$key = $object->tbSpProperty;
-		if(is_null($object->$key)) {
-			//是否可以自动生成一个guid
-			if ($genguid && in_array($key,$this->unique_f)) {
-				$this->prepareGuid($this->save);
-				//生成guid后再把数据写回object，方便后面使用
-				$object->$key = $this->save[$key];
-			} else {
-				throw new \Exception( "db.TableSplitPropertyNotSet" );
-			}
-		}
-		$this->tsplit($object->$key,$object->tbSpMethod);
 	}
 }

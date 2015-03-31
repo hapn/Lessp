@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\fr\api;
-
 /**
  *  
  * @filesource        HttpJsonProxy.php
@@ -22,7 +20,7 @@ class HttpJsonProxy extends BaseProxy
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\BaseProxy::init()
+	 * @see BaseProxy::init()
 	 */
 	function init($conf,$params)
 	{
@@ -38,7 +36,7 @@ class HttpJsonProxy extends BaseProxy
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\BaseProxy::call()
+	 * @see BaseProxy::call()
 	 */
 	function call($name,$args)
 	{

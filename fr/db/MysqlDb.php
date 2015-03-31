@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\fr\db;
-
 /**
  * ription
  * 

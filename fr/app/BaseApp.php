@@ -9,14 +9,6 @@
  * @desc 
  */
 
-use \lessp\fr\util\Timer;
-use \lessp\fr\log\Logger;
-use \lessp\fr\conf\Conf;
-use \lessp\fr\api\Api;
-use \lessp\fr\db\TxScope;
-use \lessp\fr\db\Db;
-use \lessp\fr\util\Exception;
-
 const APP_DEBUG_ENABLE = true;
 const APP_DEBUG_DISABLE = false;
 const APP_DEBUG_MANUAL = 'manual';
@@ -24,7 +16,7 @@ const APP_DEBUG_MANUAL = 'manual';
 const APP_MODE_WEB = 'web';
 const APP_MODE_TOOL = 'tool';
 
-require_once FR_ROOT.'util/Exception.php';
+require_once FR_ROOT.'util/LesspException.php';
 
 abstract class BaseApp
 {
@@ -49,7 +41,7 @@ abstract class BaseApp
 	
 	/**
 	 * 计时器
-	 * @var lessp\fr\util\Timer
+	 * @var Timer
 	 */
 	public $timer;
 	
@@ -72,14 +64,8 @@ abstract class BaseApp
 	public $appId = 0;
 	
 	/**
-	 * 站点的命名空间
-	 * @var string
-	 */
-	public $ns;
-	
-	/**
 	 * 异常
-	 * @var lessp\fr\util\Exception
+	 * @var LesspException
 	 */
 	private $exception;
 	
@@ -104,7 +90,7 @@ abstract class BaseApp
 	protected function _throw($msg, array $args = array())
 	{
 		if (!$this->exception) {
-			$this->exception = new Exception(__CLASS__, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
+			$this->exception = new Exception(__CLASS__, EXCEPTION_TYPE_SYSTEM);
 		}
 		$this->exception->newthrow($msg, $args);
 	}
@@ -183,8 +169,6 @@ abstract class BaseApp
 		if ($this->debug) {
 			ini_set('display_errors', 1);
 		}
-		
-		$this->ns = Conf::get('lessp.ns', '\\lessp\\site\\');
 	}
 	
 	/**
@@ -215,12 +199,12 @@ abstract class BaseApp
 		require_once FR_ROOT.'log/Log.php';
 		
 		$logFile = Conf::get('lessp.log.file', 'LessP');
-		$logLevel = Conf::get('lessp.log.level', $this->debug ? \lessp\fr\log\LOG_LEVEL_DEBUG : \lessp\fr\log\LOG_LEVEL_TRACE);
+		$logLevel = Conf::get('lessp.log.level', $this->debug ? LOG_LEVEL_DEBUG : LOG_LEVEL_TRACE);
 		if ($this->debug === APP_DEBUG_ENABLE) {
 			//DEBUG模式下log级别直接为debug
-			$logLevel = \lessp\fr\log\LOG_LEVEL_DEBUG;
+			$logLevel = LOG_LEVEL_DEBUG;
 		}
-		$roll = Conf::get('lessp.log.roll', \lessp\fr\log\LOG_ROLLING_NONE);
+		$roll = Conf::get('lessp.log.roll', LOG_ROLLING_NONE);
 		Logger::init(LOG_ROOT, $logFile, $logLevel, array(), $roll);
 	
 		$basic = array('logid' => $this->appId);
@@ -278,14 +262,12 @@ abstract class BaseApp
 			), array(
 				'api_root'		=> API_ROOT,
 				'conf_root'		=> CONF_ROOT.'api/',
-				'api_ns'		=> $this->ns.'api\\',
 			)
 		);
 		$intercepterclasses = Conf::get('Api.intercepters', array());
 		$intercepters = array();
 		foreach($intercepterclasses as $class) {
 			require_once PLUGIN_ROOT.'intercepters/'.$class.'.php';
-			$class = $this->ns.'intercepter\\'.$class;
 			$intercepters[] = new $class();
 		}
 		Api::setGlobalIntercepters($intercepters);

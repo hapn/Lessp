@@ -1,8 +1,5 @@
 <?php
 
-namespace lessp\fr\lib\calendar;
-
-
 const CALENDAR_STYLE_DEFAULT = 0;
 
 // 上个月

@@ -1,13 +1,8 @@
 <?php
 
-namespace lessp\fr\filter;
-
-use \lessp\fr\app\WebApp;
-use \lessp\fr\http\UrlDispatcher;
-use \lessp\fr\log\Logger;
 /**
  *  
- * @filesource        UrlFilter.php
+ * @filesource  UrlFilter.php
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0

@@ -1,7 +1,4 @@
 <?php
-namespace lessp\lib\curl;
-
-use lessp\fr\conf\Conf;
 /**
  * Curl库
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.

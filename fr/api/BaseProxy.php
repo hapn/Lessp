@@ -1,8 +1,5 @@
 <?php
 
-namespace lessp\fr\api;
-
-
 /**
  * 接口代理类
  * @example
@@ -84,9 +81,9 @@ interface IProxy
 
 /**
  *  
- * @filesource        BaseProxy.php
+ * @filesource  BaseProxy.php
  * @author      ronnie<comdeng@live.com>
- * @since        2014-12-21
+ * @since       2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
  * @desc 
@@ -104,13 +101,13 @@ abstract class BaseProxy implements IProxy
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\IProxy::init()
+	 * @see IProxy::init()
 	 */
 	function init($conf, $params) {}
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\IProxy::call()
+	 * @see IProxy::call()
 	 */
 	function call($name, $args) {
 		return null;
@@ -118,7 +115,7 @@ abstract class BaseProxy implements IProxy
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\IProxy::getMod()
+	 * @see IProxy::getMod()
 	 */
 	function getMod()
 	{
@@ -127,7 +124,7 @@ abstract class BaseProxy implements IProxy
 	
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\api\IProxy::cacheable()
+	 * @see IProxy::cacheable()
 	 */
 	function cacheable()
 	{

@@ -32,5 +32,5 @@ define('TMP_ROOT', SITE_ROOT.'/tmp/');
 define('CONF_ROOT', SITE_ROOT.'/conf/');
 
 require_once FR_ROOT.'app/WebApp.php';
-$app = new lessp\fr\app\WebApp();
+$app = new WebApp();
 $app->run();

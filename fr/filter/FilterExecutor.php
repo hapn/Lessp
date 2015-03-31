@@ -1,9 +1,5 @@
 <?php
 
-namespace lessp\fr\filter;
-use \lessp\fr\app\WebApp;
-use \lessp\fr\log\Logger;
-
 /**
  * 
  * @filesource 		IFilter.php
@@ -60,10 +56,8 @@ class FilterExecutor
 						throw new \Exception('lessp.errclass '.$classname);
 					}
 					require_once PLUGIN_ROOT.'filter/'.$classname.'.php';
-					$classname = $this->app->ns.'filter\\'.$classname;
 				} else {
 					require_once FR_ROOT.'filter/'.$classname.'.php';
-					$classname = '\\lessp\\fr\\filter\\'.$classname;
 				}
 				if (!class_exists($classname)) {
 					throw new \Exception('lessp.errclass class='.$classname);

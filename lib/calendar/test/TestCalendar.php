@@ -1,8 +1,4 @@
 <?php
-namespace lessp\lib\calendar\test;
-
-use lessp\fr\lib\calendar\Lunar;
-use lessp\fr\lib\calendar\Calendar;
 /**
  * 
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.

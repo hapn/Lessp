@@ -1,8 +1,5 @@
 <?php
-namespace lessp\fr\app;
 
-use lessp\fr\log\Logger;
-use lessp\fr\conf\Conf;
 /**
  * 
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
@@ -74,10 +71,10 @@ final class ToolApp extends \BaseApp
 		$comment = $cls->getDocComment();
 		
 		require_once FR_ROOT.'/util/PhpDoc.php';
-		$cinfo = \lessp\fr\util\PhpDoc::anaComment($clz->getDocComment());
+		$cinfo = PhpDoc::anaComment($clz->getDocComment());
 		
 		$mtd = $clz->getMethod($method);
-		$minfo = \lessp\fr\util\PhpDoc::anaMethod($mtd);
+		$minfo = PhpDoc::anaMethod($mtd);
 		$params = isset($minfo['param']) ? $minfo['param'] : array();
 
 		

@@ -1,7 +1,4 @@
 <?php
-namespace com\demo\page\foo;
-
-use lessp\fr\http\Controller;
 /**
  * 
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
@@ -11,9 +8,9 @@ use lessp\fr\http\Controller;
  * @version		    1.0
  */
 
-class ActionController extends Controller
+class Foo_Controller extends PageController
 {
-	function barAction()
+	function bar_action()
 	{
 		$this->set('foo', 'bar');
 		$this->set('hello', '我来自/foo/bar');

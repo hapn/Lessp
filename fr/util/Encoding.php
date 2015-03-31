@@ -1,10 +1,8 @@
 <?php
 
-namespace lessp\fr\util;
-
 /**
  *  
- * @filesource        Encoding.php
+ * @filesource  Encoding.php
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0

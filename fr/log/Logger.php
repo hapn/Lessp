@@ -1,6 +1,5 @@
 <?php
 
-namespace lessp\fr\log;
 /**
  *  
  * @filesource        Logger.php

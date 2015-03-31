@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\fr\db;
-
 require_once __DIR__.'/Db.php';
 /**
 *   @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.

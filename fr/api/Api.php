@@ -1,8 +1,4 @@
 <?php
-
-namespace lessp\fr\api;
-
-use nhap\fr\api\PHPProxy;
 /**
  *  
  * @filesource        Api.php
@@ -75,7 +71,6 @@ class Api
 
 		self::$apipath = $pathroot['api_root'];
 		self::$confpath = $pathroot['conf_root'];
-		self::$apins = $pathroot['api_ns'];
 	}
 
 	/**
@@ -111,7 +106,6 @@ class Api
 				$proxy->init(array(
 					'conf_path'	=> self::$confpath,
 					'api_path'	=> self::$apipath,
-					'api_ns'	=> self::$apins,
 				),$param);
 			}
 			if ($proxy->cacheable()) {

@@ -1,6 +1,4 @@
 <?php
-namespace lessp\fr\view;
-
 /**
  * 
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.

@@ -1,7 +1,7 @@
 <?php
 /**
  *  
- * @filesource        Timer.php
+ * @filesource  Timer.php
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
@@ -9,8 +9,6 @@
  * @desc 计时器工具
  * @example     
  */
-
-namespace lessp\fr\util;
 
 final class Timer
 {
@@ -20,7 +18,7 @@ final class Timer
 	 * 开始一个或多个计数器，允许传入多个计数器的名称。
 	 * @example 
 	 * ```php
-	 * $timer = new lessp\util\Timer();
+	 * $timer = new Timer();
 	 * $timer->begin($name1, $name2, $name3);
 	 * ```
 	 */

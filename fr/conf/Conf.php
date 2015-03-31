@@ -1,7 +1,4 @@
 <?php
-
-namespace lessp\fr\conf;
-
 /**
  * 配置文件
  * 

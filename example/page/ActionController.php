@@ -1,8 +1,5 @@
 <?php
 
-namespace com\demo\page;
-
-use \lessp\fr\http\Controller;
 /**
  *  
  * @filesource  ActionController.php
@@ -14,7 +11,7 @@ use \lessp\fr\http\Controller;
  * @example     
  */
 
-class ActionController extends Controller
+class _Controller extends Controller
 {
 	function indexAction()
 	{

@@ -1,11 +1,5 @@
 <?php
 
-namespace lessp\fr\filter;
-
-use \lessp\fr\util\Encoding;
-use \lessp\fr\app\WebApp;
-use \lessp\fr\conf\Conf;
-use lessp\fr\util\Exception;
 /**
  *  
  * @filesource        InitFilter.php
@@ -38,9 +32,9 @@ final class InitFilter
 	 */
 	function execute(WebApp $app)
 	{
+		$this->_parseCommon($app);
 		$this->_parseInternalVar($app);
 		$this->_parseParams($app);
-		$this->_parseCommon($app);
 		$this->_transEncoding($app);
 	
 		$requestfile = Conf::get('lessp.log.request');
@@ -51,7 +45,7 @@ final class InitFilter
 		return true;
 	}
 	
-	private function _logRequest($app, $requestfile)
+	private function _logRequest(WebApp $app, $requestfile)
 	{
 		$headers = array();
 		foreach($app->request->serverEnvs as $key=>$value) {
@@ -77,12 +71,12 @@ final class InitFilter
 		file_put_contents($file,$dump,FILE_APPEND);
 	}
 	
-	private function _parseInternalVar($app)
+	private function _parseInternalVar(WebApp $app)
 	{
 		$app->request->method = $_SERVER['REQUEST_METHOD'];
 		$app->request->appId = $app->appId;
 		
-		$arr = array_merge($_REQUEST,$_GET,$_POST);
+		$arr = array_merge($_REQUEST, $_GET, $_POST);
 		$app->request->ep 		= empty($arr['_ep']) ? false : true;
 		if ( !empty($arr['_if']) ) {
 			$app->request->if = $arr['_if'];
@@ -95,12 +89,20 @@ final class InitFilter
 		} else {
 			$app->request->ie = Conf::get('lessp.ie', $app->encoding);
 		}
-	
 		if (!empty($arr['_of'])) {
 			$app->request->of = $arr['_of'];
 		} else {
 			$method = $app->request->method;
-			if ( in_array($method, array('POST', 'PUT', 'DELETE') )) {
+			// 检查网址是否自带后缀
+			if ( ($ext = strtolower(pathinfo($app->request->url, PATHINFO_EXTENSION))) ) {
+				if (in_array($ext, array('json', 'gif', 'png', 'jpg', 'txt', 'html', 'htm', 'xml'))) {
+					if ($ext == 'htm') {
+						$ext = 'html';
+					}
+					$app->request->of = $ext;
+					$app->request->url = substr($app->request->url, 0, -(strlen($ext) + 1));
+				}
+			} else if ( in_array($method, array('POST', 'PUT', 'DELETE') )) {
 				//非GET请求默认都按照JSON返回了
 				$app->request->of = 'json';
 			} else {
@@ -129,7 +131,7 @@ final class InitFilter
 		$app->request->oe = strtoupper($app->request->oe);
 	}
 	
-	private function _parseParams($app)
+	private function _parseParams(WebApp $app)
 	{
 		$arr = array_merge($_GET,$_POST);
 		if (count($arr) != count($_GET) + count($_POST)) {
@@ -152,7 +154,7 @@ final class InitFilter
 		$app->request->inputs = $arr;
 	}
 	
-	private function _parseCommon($app)
+	private function _parseCommon(WebApp $app)
 	{
 		$app->request->cookies = $_COOKIE;
 		$app->request->files = $_FILES;
@@ -190,7 +192,7 @@ final class InitFilter
 		}
 	}
 	
-	private function _transEncoding($app)
+	private function _transEncoding(WebApp $app)
 	{
 		$ie = $app->request->ie;
 		$to = $app->encoding;

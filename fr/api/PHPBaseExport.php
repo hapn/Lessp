@@ -1,8 +1,5 @@
 <?php
 
-namespace lessp\fr\api;
-
-use lessp\fr\db\Db;
 /**
  * 基本的PHP接口基类
  * @filesource        BaseExport.php
@@ -22,14 +19,14 @@ abstract class PHPBaseExport
 	
 	/**
 	 * 
-	 * @var \lessp\fr\db\DbImpl
+	 * @var DbImpl
 	 */
 	private $defaultDb;
 	
 	/**
 	 * 获取默认的数据库
 	 * @param string $tbName 如果传入NULL，则不会调用table方法。传入空字符串，则返回默认的table
-	 * @return \lessp\fr\db\DbImpl
+	 * @return DbImpl
 	 */
 	protected function _getDefaultDb($tbName = '')
 	{

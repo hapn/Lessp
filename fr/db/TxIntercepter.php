@@ -1,8 +1,5 @@
 <?php
 
-namespace lessp\fr\api;
-
-use lessp\fr\db\TxScope;
 /**
 *   @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
 *   @file			TrxIntercepter.php

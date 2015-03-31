@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\lib\docs;
-
 /**
  * 类别分析
  * @author ronnie

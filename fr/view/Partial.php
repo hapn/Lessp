@@ -1,6 +1,4 @@
 <?php
-namespace lessp\fr\view;
-
 /**
  * 帮助器
  * @copyright 		Copyright (C) Jiehun.com.cn 2014 All rights reserved.
@@ -14,7 +12,7 @@ class Partial
 {
 	/**
 	 * 视图
-	 * @var \lessp\fr\view\IView
+	 * @var IView
 	 */
 	var $view;
 	

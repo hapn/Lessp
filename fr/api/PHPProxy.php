@@ -1,9 +1,5 @@
 <?php
 
-namespace nhap\fr\api;
-
-use lessp\fr\conf\Conf;
-use lessp\fr\api\BaseProxy;
 /**
  *  
  * @filesource        PhpProxy.php

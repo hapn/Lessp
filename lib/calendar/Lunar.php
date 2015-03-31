@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\fr\lib\calendar;
-
 /**
  * 农历类
  * 

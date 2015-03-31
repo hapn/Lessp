@@ -1,7 +1,5 @@
 <?php
 
-namespace fillp\fr\util;
-
 /**
  * 用来对php类的注释进行分析 
  * @file		PhpDocs.php

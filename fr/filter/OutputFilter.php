@@ -1,10 +1,5 @@
 <?php
 
-namespace lessp\fr\filter;
-
-use \lessp\fr\util\Encoding;
-use \lessp\fr\app\WebApp;
-use \lessp\fr\conf\Conf;
 /**
  *  
  * @filesource        OutputFilter.php
@@ -20,7 +15,7 @@ final class OutputFilter implements IFilter
 {
 	/**
 	 * (non-PHPdoc)
-	 * @see \lessp\fr\filter\IFilter::execute()
+	 * @see IFilter::execute()
 	 */
 	function execute(WebApp $app)
 	{

@@ -1,10 +1,5 @@
 <?php
 
-namespace lessp\fr\app;
-
-use \lessp\fr\log\Logger;
-use \lessp\fr\conf\Conf;
-use lessp\fr\util\Exception;
 require_once __DIR__ . '/BaseApp.php';
 
 /**
@@ -17,17 +12,17 @@ require_once __DIR__ . '/BaseApp.php';
  * @example
  *
  */
-class WebApp extends \BaseApp {
+class WebApp extends BaseApp {
 	public $filterExecutor = null;
 	/**
 	 * Http请求类
-	 * @var \lessp\fr\http\Request
+	 * @var HttpRequest
 	 */
 	public $request = null;
 	
 	/**
 	 * Http响应类
-	 * @var \lessp\fr\http\Response
+	 * @var HttpResponse
 	 */
 	public $response = null;
 	// 是否为后台运行的模式
@@ -100,13 +95,13 @@ class WebApp extends \BaseApp {
 	 * 初始化web对象
 	 */
 	private function _initWebObject() {
-		require_once FR_ROOT . 'http/Request.php';
-		require_once FR_ROOT . 'http/Response.php';
+		require_once FR_ROOT . 'http/HttpRequest.php';
+		require_once FR_ROOT . 'http/HttpResponse.php';
 		require_once FR_ROOT . 'filter/FilterExecutor.php';
 		
-		$this->request = new \lessp\fr\http\Request ( $this );
-		$this->response = new \lessp\fr\http\Response ( $this );
-		$this->filterExecutor = new \lessp\fr\filter\FilterExecutor($this );
+		$this->request = new HttpRequest ( $this );
+		$this->response = new HttpResponse ( $this );
+		$this->filterExecutor = new FilterExecutor($this );
 	}
 	
 	/**
@@ -151,13 +146,13 @@ class WebApp extends \BaseApp {
 	private function _setHeader($errcode)
 	{
 		switch($errcode) {
-			case \lessp\fr\util\MSG_NOT_FOUND:
+			case MSG_NOT_FOUND:
 				$this->response->setHeader ( 'HTTP/1.1 404 Not Found' );
 				break;
-			case \lessp\fr\util\MSG_NO_POWER:
+			case MSG_NO_POWER:
 				$this->response->setHeader('HTTP/1.1 401 Unauthorized');
 				break;
-			case \lessp\fr\util\MSG_FATAL:
+			case MSG_FATAL:
 				if ( !($this->isUserErr($errcode)) ) {
 					$this->response->setHeader('HTTP/1.1 500 Internal Server Error');
 				}

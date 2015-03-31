@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\lib\docs;
-
 /**
  *  
  * @filesource  DocsController.php
@@ -12,12 +10,7 @@ namespace lessp\lib\docs;
  * @desc		文档控制器
  */
 
-use \lessp\fr\http\Controller;
-use \lessp\fr\conf\Conf;
-use lessp\fr\util\Exception;
-use lessp\fr\api\Api;
-
-class DocsController extends Controller
+class DocsController extends PageController
 {
 	function _before($method, $args)
 	{
@@ -82,7 +75,7 @@ class DocsController extends Controller
 		$arr = explode('/', $url);
 		$last = $arr[count($arr) - 1];
 		$file = sprintf('%s%s/%sExport.php', API_ROOT, $url, ucfirst($last));
-		$className = Conf::get('lessp.ns').'api\\'.implode('\\', $arr).'\\'.ucfirst($last).'Export';
+		$className = implode('', $arr).ucfirst($last).'Export';
 		require_once $file;
 		
 		require_once __DIR__.'/ClassAnalyticer.php';
@@ -112,7 +105,7 @@ class DocsController extends Controller
 		$arr = explode('/', $url);
 		$last = $arr[count($arr) - 1];
 		$file = sprintf('%s%s/%sExport.php', API_ROOT, $url, ucfirst($last));
-		$className = Conf::get('lessp.ns').'api\\'.implode('\\', $arr).'\\'.ucfirst($last).'Export';
+		$className = ucfirst($last).'Export';
 		
 		if (!is_readable($file)) {
 			throw Exception::notfound(array('file' => $file));

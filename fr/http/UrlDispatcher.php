@@ -1,13 +1,7 @@
 <?php
 
-namespace lessp\fr\http;
+require_once __DIR__.'/PageController.php';
 
-require_once __DIR__.'/Controller.php';
-
-use \lessp\fr\app\WebApp;
-use \lessp\fr\conf\Conf;
-use \lessp\fr\log\Logger;
-use \lessp\fr\util\Exception;
 /**
  *  
  * @filesource        UrlDispatcher.php
@@ -51,7 +45,7 @@ class UrlDispatcher
 	
 	/**
 	 * 
-	 * @var \lessp\fr\util\Exception
+	 * @var LesspException
 	 */
 	private $_ex;
 	
@@ -64,7 +58,7 @@ class UrlDispatcher
 	 */
 	function __construct($app, $mode = DISPATCH_MODE_NORMAL) 
 	{
-		$this->_ex = new Exception(__CLASS__, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
+		$this->_ex = new Exception(__CLASS__, EXCEPTION_TYPE_SYSTEM);
 		if ($app === NULL) {
 			if (!self::$lastApp) {
 				$this->_ex->newthrow('app_required');
@@ -77,7 +71,7 @@ class UrlDispatcher
 			self::$lastApp = $this->app = $app;
 		}
 		
-		$this->ctlName = Conf::get('lessp.controlleName', 'ActionController');
+		$this->ctlName = Conf::get('lessp.controlleName', 'Controller');
 		$this->methodExt = Conf::get('lessp.methodExt', '_action');
 		$this->mode = $mode;
 	}
@@ -87,7 +81,7 @@ class UrlDispatcher
 	 * @param string $url
 	 * @throws \Exception
 	 * 
-	 * @return string|null|\lessp\fr\http\Response
+	 * @return string|null|HttpResponse
 	 * 
 	 * normal模式：null
 	 * forward模式：null
@@ -103,7 +97,7 @@ class UrlDispatcher
 			//GET请求才有这种灵活策略
 			//其他请求严格一点，安全限制要求
 			foreach($url as $seg) {
-				if (preg_match('/^([a-z0-9]{24,24}|[0-9]+)$/i',$seg)) {
+				if (preg_match('/^([a-z0-9]{20,}|[0-9]+)$/i',$seg)) {
 					$args[] = $seg;
 				} else {
 					$pathseg[] = $seg;
@@ -120,7 +114,7 @@ class UrlDispatcher
 		
 		$fullpath = rtrim(PAGE_ROOT.implode('/', $pathseg),'/');
 		$userfunc = '';
-		$ctlName = $this->ctlName.'.php';
+		$ctlName = 'ActionController.php';
 		
 		if (is_readable($fullpath.'/'.$ctlName)) {
 			$path = $fullpath.'/'.$ctlName;
@@ -128,24 +122,13 @@ class UrlDispatcher
 			if (empty($args)) {
 				$args[] = '';
 			}
-			$nsseg = array_diff($pathseg, array(''));
-			if (empty($nsseg)) {
-				$ctlNs = $this->app->ns.'page\\';
-			} else {
-				$ctlNs = $this->app->ns.'page\\'.implode('\\', $nsseg).'\\';
-			}
 		} elseif (is_readable($fullpath.'/index/'.$ctlName)) {
 			$path = $fullpath.'/index/'.$ctlName;
 			$func = 'index';
 			if (empty($args)) {
 				$args[] = '';
 			}
-			$nsseg = array_diff($pathseg, array(''));
-			if (empty($nsseg)) {
-				$ctlNs = $this->app->ns.'page\\index\\';
-			} else {
-				$ctlNs = $this->app->ns.'page\\'.implode('\\', $nsseg).'\\index\\';
-			}
+			$pathseg[] = 'index';
 		} else {
 			if ($count > 0) {
 				//至少有一级
@@ -154,33 +137,27 @@ class UrlDispatcher
 				$func = $pathseg[$count-1];
 				$userfunc = $func;
 				
-				$nsseg = array_diff($rootseg, array(''));
-				if (empty($nsseg)) {
-					$ctlNs = $this->app->ns.'page\\';
-				} else {
-					$ctlNs = $this->app->ns.'page\\'.implode('\\', $nsseg).'\\';
-				}
+				unset($pathseg[$count - 1]);
+				
 			} else {
 				$path = rtrim(PAGE_ROOT, '/').'/'.$ctlName;
 				$func = 'index';
-				
-				$ctlNs = $this->app->ns.'page\\';
 			}
 		}	
 		
-		$className = $ctlNs.$this->ctlName;
+		$className = implode('_', array_map('ucfirst', array_diff($pathseg, array('')))).'_'.$this->ctlName;
 		
 		if (is_readable($path)) {
 			require_once $path;
 			if (!class_exists($className)) {
-				throw Exception::notfound(array('class' => $className));
+				throw LesspException::notfound(array('class' => $className));
 			}
 		} else {
-			throw Exception::notfound(array('path' => $path));
+			throw LesspException::notfound(array('path' => $path));
 		}
 		$path = str_replace(PAGE_ROOT, '', $path);
 		$relpath = trim(dirname($path), '/');
-		Logger::debug("hit ActionController[%s] %s:%s", $this->mode, $path, $func);
+		Logger::debug("hit Controller[%s] %s:%s", $this->mode, $path, $func);
 		
 		
 		$controller = new $className();
@@ -227,7 +204,7 @@ class UrlDispatcher
 				break;
 			case 'post':
 				if ($func{0} != '_') {
-					throw Exception::notfound();
+					throw LesspException::notfound();
 				}
 			case 'put':
 			case 'delete':
@@ -254,10 +231,10 @@ class UrlDispatcher
 				array_unshift($args, $func);
 				$mainMethod = $this->_loadMethod($controller, 'index', $args);
 				if (!$mainMethod) {
-					throw Exception::notfound();
+					throw LesspException::notfound();
 				}
 			} else {
-				throw Exception::notfound(array('func' => $func.$this->methodExt));
+				throw LesspException::notfound(array('func' => $func.$this->methodExt));
 			}
 		}
 		
@@ -314,7 +291,7 @@ class UrlDispatcher
 				$reflection = new \ReflectionMethod($controller, $method);
 				$argnum = $reflection->getNumberOfParameters();
 				if ($argnum > count($args)) {
-					throw Exception::notfound('args not match');
+					throw LesspException::notfound('args not match');
 				}
 				return $reflection;
 			}

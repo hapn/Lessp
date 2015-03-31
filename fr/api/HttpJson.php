@@ -1,7 +1,5 @@
 <?php
 
-namespace lessp\fr\api;
-
 /**
  *  
  * @filesource        HttpJson.php

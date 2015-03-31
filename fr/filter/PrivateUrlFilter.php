@@ -1,8 +1,5 @@
 <?php
 
-namespace lessp\fr\filter;
-
-use \lessp\fr\app\WebApp;
 /**
  *  
  * @filesource        PrivateUrlFilter.php
