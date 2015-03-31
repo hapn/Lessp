@@ -104,9 +104,9 @@ abstract class BaseApp
 	protected function _throw($msg, array $args = array())
 	{
 		if (!$this->exception) {
-			$this->exception = new Exception($module, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
+			$this->exception = new Exception(__CLASS__, \lessp\fr\util\EXCEPTION_TYPE_SYSTEM);
 		}
-		$this->exception->newthrow($msg, $args, $type);
+		$this->exception->newthrow($msg, $args);
 	}
 	
 	/**

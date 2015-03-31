@@ -1,6 +1,6 @@
 <?php
 
-namespace lessp\fr\li\calendar;
+namespace lessp\fr\lib\calendar;
 
 
 const CALENDAR_STYLE_DEFAULT = 0;

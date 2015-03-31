@@ -14,8 +14,10 @@ use lessp\fr\conf\Conf;
 
 const TOOL_ERROR_CODE = 201;
 const TOOL_EXCEPTION_CODE = 202;
+const ACTION_PREFIX = '_action'; 
 
 require_once __DIR__.'/BaseApp.php';
+
 
 final class ToolApp extends \BaseApp
 {
@@ -107,9 +109,9 @@ options
 example
 -------- 
 
-* php runroot/index.php /foo/bar?foo=bar
-* php runroot/index.php /foo/bar/ToolController.php -foo bar
-* php runroot/index.php TOOL_ROOT./foo/bar/ToolController.php -foo bar
+* php runroot/index.php -u /foo/bar?foo=bar
+* php runroot/index.php -u /foo/bar/ToolController.php -foo bar
+* php runroot/index.php -u TOOL_ROOT./foo/bar/ToolController.php -foo bar
 
 > 将调用TOOL_ROOT.'/foo/bar/ToolController.php'::execute()
 
@@ -157,7 +159,6 @@ HELP;
 		}
 		
 		$this->url = $info['path'];
-		
 		if (isset($info['query'])) {
 			parse_str($info['query'], $args);
 				
@@ -185,6 +186,9 @@ HELP;
 		if (is_string($param)) {
 			if ($param[0] == '{') {// JSON格式
 				$args = @json_decode($param, true);
+				if ($args === NULL) {
+					$args = array();
+				}
 			} else {
 				parse_str($param, $args);	
 			}
@@ -230,7 +234,7 @@ HELP;
 			if ( is_callable( array($ctl, 'help') ) ) {
 				$ctl->help($method);
 			} else {
-				$this->showHelp($ctl, $method.'Action');
+				$this->showHelp($ctl, $method.ACTION_PREFIX);
 			}
 			return;
 		}
@@ -240,9 +244,9 @@ HELP;
 			$ctl->_before($method, $this->args);
 		}
 		
-		$_args = $this->getFuncArgs($ctl, $method.'Action', $this->args);		
+		$_args = $this->getFuncArgs($ctl, $method.ACTION_PREFIX, $this->args);		
 		try {
-			call_user_func_array( array($ctl, $method.'Action'), $_args);
+			call_user_func_array( array($ctl, $method.ACTION_PREFIX), $_args);
 		} catch(\Exception $ex) {
 			if ( is_callable( array($ctl, '_after') ) ) {
 				$ctl->_after($method, $this->args);
