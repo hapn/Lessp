@@ -26,7 +26,6 @@ class PHPProxy extends BaseProxy
 	{
 		$confroot = $conf['conf_path'];
 		$apiroot = $conf['api_path'];
-		$apins = $conf['api_ns'];
 		
 		$mod = $this->getMod();
 		//支持多级的子模块
@@ -34,7 +33,7 @@ class PHPProxy extends BaseProxy
 		//自动加载app mod conf
 		Conf::load($confroot.$modseg[0].'.conf.php');
 		
-		$class = $apins.implode('\\', $modseg).'\\'. $modseg[count($modseg) - 1]. 'Export';
+		$class = implode('', array_map('ucfirst', $modseg)). 'Export';
 		
 		//类名以每一级单词大写开始
 		$path = $apiroot.$mod.'/'.ucfirst($modseg[count($modseg)-1]).'Export.php';

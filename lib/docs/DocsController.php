@@ -18,7 +18,7 @@ class DocsController extends PageController
 		
 		// 去除访问的入侵漏洞
 		if (strpos($this->get('url'), '.') !== FALSE) {
-			throw Exception::notfound();
+			throw LesspException::notfound();
 		}
 		
 		parent::_before($method, $args);
@@ -75,7 +75,7 @@ class DocsController extends PageController
 		$arr = explode('/', $url);
 		$last = $arr[count($arr) - 1];
 		$file = sprintf('%s%s/%sExport.php', API_ROOT, $url, ucfirst($last));
-		$className = implode('', $arr).ucfirst($last).'Export';
+		$className = implode('', array_map('ucfirst', $arr)).'Export';
 		require_once $file;
 		
 		require_once __DIR__.'/ClassAnalyticer.php';
@@ -95,7 +95,7 @@ class DocsController extends PageController
 		$method = $this->get('method');
 		
 		if (!$method || !$url) {
-			throw Exception::args();
+			throw LesspException::args();
 		}
 		
 		$this->set('title', '测试：'.$url);
@@ -105,21 +105,21 @@ class DocsController extends PageController
 		$arr = explode('/', $url);
 		$last = $arr[count($arr) - 1];
 		$file = sprintf('%s%s/%sExport.php', API_ROOT, $url, ucfirst($last));
-		$className = ucfirst($last).'Export';
+		$className = implode('', array_map('ucfirst', $arr)).'Export';
 		
 		if (!is_readable($file)) {
-			throw Exception::notfound(array('file' => $file));
+			throw LesspException::notfound(array('file' => $file));
 		}
 		require_once $file;
 		$rc = new \ReflectionClass($className);
 		if (!$rc->hasMethod($method)) {
-			throw Exception::notfound(array('method' => $method));
+			throw LesspException::notfound(array('method' => $method));
 		}
 		$m = $rc->getMethod($method);
 		require_once __DIR__.'/ClassAnalyticer.php';
 		$result = 	ClassAnalyticer::anaMethod($m, FALSE);
 		if (!$result) {
-			throw Exception::notfound();
+			throw LesspException::notfound();
 		}
 		
 		$this->set('method', $result);
