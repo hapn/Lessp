@@ -11,7 +11,7 @@
  * @example     
  */
 
-class _Controller extends Controller
+class _Controller extends PageController
 {
 	function indexAction()
 	{
