@@ -5,7 +5,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 
  */
 
@@ -130,19 +130,19 @@ abstract class BaseApp
 		require_once FR_ROOT.'conf/Conf.php';
 		
 		$this->appId = $this->genAppId();
-		global $_LessP_appid;
-		$_LessP_appid = $this->appId;
+		global $_HapN_appid;
+		$_HapN_appid = $this->appId;
 	
 		$this->_initConf();
 		$this->_initEnv();
 		$this->_initLog();
 		
-		if (true !== Conf::get('lessp.disable_api')) {
+		if (true !== Conf::get('hapn.disable_api')) {
 			//没有强制关闭
 			$this->_initApi();
 		}
 		
-		if (true !== Conf::get('lessp.disable_db')) {
+		if (true !== Conf::get('hapn.disable_db')) {
 			//没有强制关闭
 			$this->_initDB();
 		}
@@ -154,17 +154,17 @@ abstract class BaseApp
 	protected function _initConf()
 	{
 		$confs = array(
-			CONF_ROOT.'lessp.conf.php',
+			CONF_ROOT.'hapn.conf.php',
 		);
 		Conf::load($confs);
-		$this->debug = Conf::get('lessp.debug',false);
+		$this->debug = Conf::get('hapn.debug',false);
 		if ($this->mode === APP_MODE_WEB) {
 			$this->debug === APP_DEBUG_MANUAL ? ($this->debug = !empty($_GET['_d']) ) : APP_DEBUG_DISABLE;
 		} else {
 			$args = getopt('d:');
 			$this->debug === APP_DEBUG_MANUAL ? ($this->debug = !empty($args['d'])) : APP_DEBUG_DISABLE;
 		}
-		$this->encoding = strtoupper(Conf::get('lessp.encoding', $this->encoding));
+		$this->encoding = strtoupper(Conf::get('hapn.encoding', $this->encoding));
 		
 		if ($this->debug) {
 			ini_set('display_errors', 1);
@@ -198,13 +198,13 @@ abstract class BaseApp
 	{
 		require_once FR_ROOT.'log/Log.php';
 		
-		$logFile = Conf::get('lessp.log.file', 'LessP');
-		$logLevel = Conf::get('lessp.log.level', $this->debug ? LOG_LEVEL_DEBUG : LOG_LEVEL_TRACE);
+		$logFile = Conf::get('hapn.log.file', 'HapN');
+		$logLevel = Conf::get('hapn.log.level', $this->debug ? LOG_LEVEL_DEBUG : LOG_LEVEL_TRACE);
 		if ($this->debug === APP_DEBUG_ENABLE) {
 			//DEBUG模式下log级别直接为debug
 			$logLevel = LOG_LEVEL_DEBUG;
 		}
-		$roll = Conf::get('lessp.log.roll', LOG_ROLLING_NONE);
+		$roll = Conf::get('hapn.log.roll', LOG_ROLLING_NONE);
 		Logger::init(LOG_ROOT, $logFile, $logLevel, array(), $roll);
 	
 		$basic = array('logid' => $this->appId);
@@ -280,7 +280,7 @@ abstract class BaseApp
 	 */
 	function isUserErr($errcode)
 	{
-		$usererr = Conf::get('lessp.error.userreg', '/\.u_/');
+		$usererr = Conf::get('hapn.error.userreg', '/\.u_/');
 		return preg_match($usererr, $errcode) > 0;
 	}
 	
@@ -333,7 +333,7 @@ abstract class BaseApp
 			Logger::trace($errmsg);
 		} else {
 			Logger::fatal($errmsg);
-			$trackConf = $usererr = Conf::get('lessp.log.tracking');
+			$trackConf = $usererr = Conf::get('hapn.log.tracking');
 		}
 	}
 	
@@ -351,7 +351,7 @@ abstract class BaseApp
 		Logger::notice(implode('',$str).' status='.$this->endStatus);
 		Logger::flush();
 		
-		if (true !== Conf::get('lessp.disable_db')) {
+		if (true !== Conf::get('hapn.disable_db')) {
 			//做一些清理
 			require_once FR_ROOT.'db/TxScope.php';
 			TxScope::rollbackAll();

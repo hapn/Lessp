@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 输出处理的过滤器
  * @example     
  */
@@ -27,12 +27,12 @@ final class OutputFilter implements IFilter
 		}
 		$app->response->send();
 	
-		$enableTask = Conf::get('lessp.task_enable', true);
+		$enableTask = Conf::get('hapn.task_enable', true);
 		if ($enableTask) {
 			// 将后续请求转入后台处理
 			fastcgi_finish_request();
 			$app->isTask = true;
-			ini_set('max_execution_time', intval(Conf::get('lessp.task_timeout', 60 * 10)));
+			ini_set('max_execution_time', intval(Conf::get('hapn.task_timeout', 60 * 10)));
 		}
 		
 		// 如果有定义的需要在后台处理的内容，则在此处理

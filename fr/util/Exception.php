@@ -1,8 +1,8 @@
 <?php
-namespace lessp\fr\util;
+namespace hapn\fr\util;
 
 /**
- * lessp错误
+ * hapn错误
  * @copyright 		Copyright (C) Jiehun.com.cn 2015 All rights reserved.
  * @file			LesspException.php
  * @author			ronnie<dengxiaolong@jiehun.com.cn>
@@ -10,12 +10,12 @@ namespace lessp\fr\util;
  * @version		    1.0
  */
 
-const MSG_NOT_FOUND = 'lessp.u_notfound';
-const MSG_NOT_LOGIN = 'lessp.u_login';
-const MSG_NO_POWER 	= 'lessp.u_power';
-const MSG_FATAL		= 'lessp.fatal';
-const MSG_ARGS		= 'lessp.u_args';
-const MSG_INPUT		= 'lessp.u_inputs';
+const MSG_NOT_FOUND = 'hapn.u_notfound';
+const MSG_NOT_LOGIN = 'hapn.u_login';
+const MSG_NO_POWER 	= 'hapn.u_power';
+const MSG_FATAL		= 'hapn.fatal';
+const MSG_ARGS		= 'hapn.u_args';
+const MSG_INPUT		= 'hapn.u_inputs';
 
 
 const EXCEPTION_TYPE_USER = 1;
@@ -39,7 +39,7 @@ final class Exception
 	 * 初始化模块
 	 * @param string 	$module
 	 * @param int 		[$exType=EXCEPTION_TYPE_USER]  
-	 * @return \lessp\fr\app\Exception
+	 * @return \hapn\fr\app\Exception
 	 */
 	function __construct($module, $exType = EXCEPTION_TYPE_USER)
 	{
@@ -88,7 +88,7 @@ final class Exception
 	/**
 	 * 找不到页面的报错
 	 * @param array $args
-	 * @return \lessp\fr\app\LesspException
+	 * @return \hapn\fr\app\LesspException
 	 */
 	static function notfound($args = array())
 	{
@@ -97,7 +97,7 @@ final class Exception
 	
 	/**
 	 * 没有登录
-	 * @return \lessp\fr\app\LesspException
+	 * @return \hapn\fr\app\LesspException
 	 */
 	static function notlogin()
 	{
@@ -106,7 +106,7 @@ final class Exception
 	
 	/**
 	 * 没有权限
-	 * @return \lessp\fr\app\LesspException
+	 * @return \hapn\fr\app\LesspException
 	 */
 	static function nopower()
 	{
@@ -115,7 +115,7 @@ final class Exception
 	
 	/**
 	 * 缺少参数
-	 * @return \lessp\fr\app\LesspException
+	 * @return \hapn\fr\app\LesspException
 	 */
 	static function args()
 	{
@@ -124,7 +124,7 @@ final class Exception
 	
 	/**
 	 * 输入有误
-	 * @return \lessp\fr\app\LesspException
+	 * @return \hapn\fr\app\LesspException
 	 */
 	static function input()
 	{

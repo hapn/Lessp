@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since       2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc		文档控制器
  */
 
@@ -14,7 +14,7 @@ class DocsController extends PageController
 {
 	function _before($method, $args)
 	{
-		Conf::set('lessp.view.root', '');
+		Conf::set('hapn.view.root', '');
 		
 		// 去除访问的入侵漏洞
 		if (strpos($this->get('url'), '.') !== FALSE) {

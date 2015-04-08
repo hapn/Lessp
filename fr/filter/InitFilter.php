@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 初始化的过滤器
  * @example     
  */
@@ -37,7 +37,7 @@ final class InitFilter
 		$this->_parseParams($app);
 		$this->_transEncoding($app);
 	
-		$requestfile = Conf::get('lessp.log.request');
+		$requestfile = Conf::get('hapn.log.request');
 		if ($requestfile) {
 			$this->_logRequest($app,$requestfile);
 		}
@@ -55,7 +55,7 @@ final class InitFilter
 		}
 		$file = LOG_ROOT.$requestfile;
 		$data = $app->request->inputs;
-		$keyarr = Conf::get('lessp.log.requestfilter', array());
+		$keyarr = Conf::get('hapn.log.requestfilter', array());
 		foreach($keyarr as $key) {
 			if (isset($data[$key])) {
 				$data[$key] = '[removed]';
@@ -87,7 +87,7 @@ final class InitFilter
 		} elseif ( !empty($arr['_ie']) ) {
 			$app->request->ie = $arr['_ie'];
 		} else {
-			$app->request->ie = Conf::get('lessp.ie', $app->encoding);
+			$app->request->ie = Conf::get('hapn.ie', $app->encoding);
 		}
 		if (!empty($arr['_of'])) {
 			$app->request->of = $arr['_of'];
@@ -112,7 +112,7 @@ final class InitFilter
 		if (!empty($arr['_oe'])) {
 			$app->request->oe = $arr['_oe'];
 		} else {
-			$app->request->oe = Conf::get('lessp.oe', $app->encoding);
+			$app->request->oe = Conf::get('hapn.oe', $app->encoding);
 		}
 		if ($app->request->of === 'json') {
 			//JSON只能UTF-8
@@ -181,7 +181,7 @@ final class InitFilter
 		unset($_GET['route']);
 		$query = http_build_query($_GET);
 		$app->request->uri = $app->request->url.($query? '?'.$query : '');
-		$app->request->host = strtolower(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : Conf::get('lessp.host', ''));
+		$app->request->host = strtolower(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : Conf::get('hapn.host', ''));
 		$app->request->serverEnvs = $_SERVER;
 	
 		if (strncmp($app->request->url,'/_private/', 10) === 0) {

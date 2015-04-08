@@ -8,7 +8,7 @@ require_once __DIR__.'/PageController.php';
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 网址分配器
  * @example     
  */
@@ -71,8 +71,8 @@ class UrlDispatcher
 			self::$lastApp = $this->app = $app;
 		}
 		
-		$this->ctlName = Conf::get('lessp.controlleName', 'Controller');
-		$this->methodExt = Conf::get('lessp.methodExt', '_action');
+		$this->ctlName = Conf::get('hapn.controlleName', 'Controller');
+		$this->methodExt = Conf::get('hapn.methodExt', '_action');
 		$this->mode = $mode;
 	}
 

@@ -142,7 +142,7 @@ final class PhpView implements IView
 			}
 			return $body;
 		}
-		throw new \Exception('lessp.notpl '.$this->file.' no such file or directory');
+		throw new \Exception('hapn.notpl '.$this->file.' no such file or directory');
 	}
 	
 	/**
@@ -238,12 +238,12 @@ final class PhpView implements IView
 			}
 		}
 		if (!$found) {
-			throw new \Exception('lessp.phpview_nohelper helper='.$name);
+			throw new \Exception('hapn.phpview_nohelper helper='.$name);
 		}
 		
 		require_once $file;
 		if (!class_exists($className)) {
-			throw new \Exception('lessp.phpview_noclass class='.$className);
+			throw new \Exception('hapn.phpview_noclass class='.$className);
 		}
 		$helper = new $className($this);
 
@@ -269,6 +269,6 @@ final class PhpView implements IView
 		if (is_readable($file)) {
 			return $file;
 		}
-		throw new \Exception('lessp.zendview.nohelper helper='.$name);
+		throw new \Exception('hapn.zendview.nohelper helper='.$name);
 	}
 }

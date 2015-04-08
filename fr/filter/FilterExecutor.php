@@ -20,7 +20,7 @@ interface IFilter
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 
  * @example     
  */
@@ -40,7 +40,7 @@ class FilterExecutor
 	/**
 	 * 载入过滤器
 	 * @param array $filters
-	 * @throws \Exception lessp.errpath 错误的路径
+	 * @throws \Exception hapn.errpath 错误的路径
 	 */
 	function loadFilters($filters)
 	{
@@ -48,19 +48,19 @@ class FilterExecutor
 			foreach($classes as $classname) {
 				if (strpos($classname,'.') !== false) {
 					//避免引用到其他目录
-					throw new \Exception('lessp.errpath');
+					throw new \Exception('hapn.errpath');
 				}
 				if (!is_readable(__DIR__.'/'.$classname.'.php')) {
 					// 支持扩展的一种方式
 					if (!is_readable(PLUGIN_ROOT.'filter/'.$classname.'.php')) {
-						throw new \Exception('lessp.errclass '.$classname);
+						throw new \Exception('hapn.errclass '.$classname);
 					}
 					require_once PLUGIN_ROOT.'filter/'.$classname.'.php';
 				} else {
 					require_once FR_ROOT.'filter/'.$classname.'.php';
 				}
 				if (!class_exists($classname)) {
-					throw new \Exception('lessp.errclass class='.$classname);
+					throw new \Exception('hapn.errclass class='.$classname);
 				}
 				// Logger::debug('load filter %s.%s', $key, $classname);
 				$this->impFilters[$key][] = new $classname();

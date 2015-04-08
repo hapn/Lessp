@@ -1,7 +1,7 @@
 <?php
-namespace lessp\fr\view;
+namespace hapn\fr\view;
 
-use \lessp\fr\view\IView;
+use \hapn\fr\view\IView;
 
 /**
  * 帮助器父类

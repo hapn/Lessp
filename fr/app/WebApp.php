@@ -7,7 +7,7 @@ require_once __DIR__ . '/BaseApp.php';
  * @author 		ronnie<comdeng@live.com>
  * @since 		2014-12-21
  * @version 	1.0
- * @copyright 	Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright 	Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc web的基本app
  * @example
  *
@@ -134,11 +134,11 @@ class WebApp extends BaseApp {
 	 * 初始化过滤器
 	 */
 	private function _initFilter() {
-		$filters ['init'] = $this->_getFilter ( 'lessp.filter.init', array ( 'InitFilter' ) );
-		$filters ['input'] 	= $this->_getFilter ( 'lessp.filter.input', array () );
-		$filters ['url'] 	= $this->_getFilter ( 'lessp.filter.url', array ( 'UrlFilter'), true );
-		$filters ['output'] = $this->_getFilter ( 'lessp.filter.output', array ( 'OutputFilter' ) );
-		$filters ['clean'] 	= $this->_getFilter ( 'lessp.filter.clean', array () );
+		$filters ['init'] = $this->_getFilter ( 'hapn.filter.init', array ( 'InitFilter' ) );
+		$filters ['input'] 	= $this->_getFilter ( 'hapn.filter.input', array () );
+		$filters ['url'] 	= $this->_getFilter ( 'hapn.filter.url', array ( 'UrlFilter'), true );
+		$filters ['output'] = $this->_getFilter ( 'hapn.filter.output', array ( 'OutputFilter' ) );
+		$filters ['clean'] 	= $this->_getFilter ( 'hapn.filter.clean', array () );
 		
 		$this->filterExecutor->loadFilters ( $filters );
 	}
@@ -165,7 +165,7 @@ class WebApp extends BaseApp {
 	 * @param string $errcode
 	 */
 	function _goErrorPage($errcode) {
-		$conf = Conf::get ( 'lessp.error.redirect', array () );
+		$conf = Conf::get ( 'hapn.error.redirect', array () );
 		$host = $this->request->host;
 		if (! empty ( $conf [$host] )) {
 			$conf = $conf [$host];
@@ -173,8 +173,8 @@ class WebApp extends BaseApp {
 		$url = '/';
 		if (isset ( $conf [$errcode] )) {
 			$url = $conf [$errcode];
-		} elseif (isset ( $conf ['lessp.error'] )) {
-			$url = $conf ['lessp.error'];
+		} elseif (isset ( $conf ['hapn.error'] )) {
+			$url = $conf ['hapn.error'];
 		}
 		$domain = $this->request->host;
 		if (strncmp ( $domain, 'http', 4 ) !== 0) {
@@ -207,7 +207,7 @@ class WebApp extends BaseApp {
 				$this->response->sendHeaders ();
 				exit ();
 			} else {
-				Conf::set('lessp.view.root', PAGE_ROOT);
+				Conf::set('hapn.view.root', PAGE_ROOT);
 				if (isset($info['query'])) {
 					parse_str($info['query'], $args);
 				} else {
@@ -238,7 +238,7 @@ class WebApp extends BaseApp {
 			print_r ( $error );
 			echo "</pre>";
 		}
-		$errcode = 'lessp.fatal';
+		$errcode = 'hapn.fatal';
 		$this->endStatus = $errcode;
 		$this->response->setLesspHeader ( $errcode );
 		
@@ -272,9 +272,9 @@ class WebApp extends BaseApp {
 			echo "</pre>";
 		}
 		if ($this->request->method == 'GET') {
-			$retrycode = Conf::get ( 'lessp.error.retrycode', '/\.net_/' );
+			$retrycode = Conf::get ( 'hapn.error.retrycode', '/\.net_/' );
 			$retrynum = $this->request->get ( '_retry', 0 );
-			$retrymax = Conf::get ( 'lessp.error.retrymax', 1 );
+			$retrymax = Conf::get ( 'hapn.error.retrymax', 1 );
 			if ($retrycode && $retrynum < $retrymax && preg_match ( $retrycode, $errcode ) > 0) {
 				$retrynum ++;
 				$gets = array_merge ( $_GET, array ( '_retry' => $retrynum ) );
@@ -303,7 +303,7 @@ class WebApp extends BaseApp {
 	 */
 	function shutdownHandler() {
 		$this->filterExecutor->executeFilter ( 'clean' );
-		global $_LessP_appid;
+		global $_HapN_appid;
 		
 		$r = $this->request;
 		$ip = ($r->userip === $r->clientip) ? $r->userip : ($r->userip . '-' . $r->clientip);
@@ -311,7 +311,7 @@ class WebApp extends BaseApp {
 		$basic = array (
 			'ip' => $ip,
 			'uri' => $this->request->rawUri,
-			'logid' => $this->appId . '-' . ($_LessP_appid - $this->appId) 
+			'logid' => $this->appId . '-' . ($_HapN_appid - $this->appId) 
 		);
 		
 		if ($this->request->method != 'GET') {

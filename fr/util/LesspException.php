@@ -1,6 +1,6 @@
 <?php
 /**
- * lessp错误
+ * hapn错误
  * @copyright 		Copyright (C) Jiehun.com.cn 2015 All rights reserved.
  * @file			LesspException.php
  * @author			ronnie<dengxiaolong@jiehun.com.cn>
@@ -8,12 +8,12 @@
  * @version		    1.0
  */
 
-const MSG_NOT_FOUND = 'lessp.u_notfound';
-const MSG_NOT_LOGIN = 'lessp.u_login';
-const MSG_NO_POWER 	= 'lessp.u_power';
-const MSG_FATAL		= 'lessp.fatal';
-const MSG_ARGS		= 'lessp.u_args';
-const MSG_INPUT		= 'lessp.u_inputs';
+const MSG_NOT_FOUND = 'hapn.u_notfound';
+const MSG_NOT_LOGIN = 'hapn.u_login';
+const MSG_NO_POWER 	= 'hapn.u_power';
+const MSG_FATAL		= 'hapn.fatal';
+const MSG_ARGS		= 'hapn.u_args';
+const MSG_INPUT		= 'hapn.u_inputs';
 
 
 const EXCEPTION_TYPE_USER = 1;

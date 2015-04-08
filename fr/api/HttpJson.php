@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc HttpJson请求类
  * @example
  * 请求的Url格式为http://{host:port}/{urlPrefix}/{mod}?{urlSuffix}
@@ -17,8 +17,8 @@
  * rpcCall函数里要求输入mod，对应mod.method，是要调用的函数
  * 
  * 举例
- * http://127.0.0.1:8888/_private/rpc/lessp.getSubCategories?_if=json&_of=json
- * 表示调用lessp模块的getSubCategories方法，参数在POST请求的rpcinput参数里
+ * http://127.0.0.1:8888/_private/rpc/hapn.getSubCategories?_if=json&_of=json
+ * 表示调用hapn模块的getSubCategories方法，参数在POST请求的rpcinput参数里
  * 
  * 如果不遵守这个规范，可以在rpcCall里按需求调整urlPrefix, mod或者urlSuffix来拼装成自己的url
  * 
@@ -127,9 +127,9 @@ class HttpJson
 	
 	protected function getLogid()
 	{
-		global $_LessP_appid;
-		$logid = $_LessP_appid;
-		$_LessP_appid ++;
+		global $_HapN_appid;
+		$logid = $_HapN_appid;
+		$_HapN_appid ++;
 		return $logid;
 	}
 	

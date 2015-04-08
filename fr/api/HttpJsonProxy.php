@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 使用HttpJson作为协议的代理类
  * @example     
  */
@@ -76,7 +76,7 @@ class HttpJsonProxy extends BaseProxy
 		}
 		$input['rpcinit'] = $this->params;
 		$ret = $this->srcCaller->rpcCall($url, $input);
-		if (isset($ret['err']) && ($ret['err'] == 'ok' || $ret['err'] == 'lessp.ok') && isset($ret['data'])){
+		if (isset($ret['err']) && ($ret['err'] == 'ok' || $ret['err'] == 'hapn.ok') && isset($ret['data'])){
 			//如果函数什么都不返回，rpcret就是null
 			//这时候isset判断会得到false
 			return $ret['data']['rpcret'];

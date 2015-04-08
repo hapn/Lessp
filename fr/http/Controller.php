@@ -1,6 +1,6 @@
 <?php
 
-namespace lessp\fr\http;
+namespace hapn\fr\http;
 
 /**
  *  
@@ -8,7 +8,7 @@ namespace lessp\fr\http;
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 控制器
  * @example     
  */
@@ -133,7 +133,7 @@ abstract class Controller
 	 * 跳转页面请求
 	 * @param string $url
 	 * @param array $args
-	 * @see \lessp\fr\http\Response::forward
+	 * @see \hapn\fr\http\Response::forward
 	 */
 	function forward($url, $args = array())
 	{

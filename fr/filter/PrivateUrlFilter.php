@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 私有网址的过滤器
  * @example     
  */
@@ -21,7 +21,7 @@ final class PrivateUrlFilter implements IFilter
 				//如果是内部ip则检查范围，否则直接不让通过
 				!($this->isLocalIp($ip) && $this->inRange($ip))) 
 			{
-				throw new \Exception('lessp.ipauthfail');
+				throw new \Exception('hapn.ipauthfail');
 			}
 		}
 	}
@@ -50,7 +50,7 @@ final class PrivateUrlFilter implements IFilter
 	 */
 	private function inRange($ip)
 	{
-		$range = Conf::get('lessp.privateip');
+		$range = Conf::get('hapn.privateip');
 		if (!$range) {
 			return true;
 		}

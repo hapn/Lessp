@@ -6,7 +6,7 @@
  * @author      ronnie<comdeng@live.com>
  * @since        2014-12-21
  * @version     1.0
- * @copyright   Copyright (C) cc.lessp 2014 All rights reserved.
+ * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 
  * @example     
  */
@@ -170,13 +170,13 @@ class HttpResponse
 	/**
 	 * 设置jsonp回调函数名称
 	 * @param string $func
-	 * @throws \Exception lessp.errcallback 函数名称格式不正确
+	 * @throws \Exception hapn.errcallback 函数名称格式不正确
 	 * @return HttpResponse
 	 */
 	function setCallback($func)
 	{
 		if (!preg_match('/^[a-zA-Z_][a-zA-Z_0-9.]{0,128}$/',$func)) {
-			throw new \Exception('lessp.errcallback');
+			throw new \Exception('hapn.errcallback');
 		}
 		$this->callback = $func;
 		//设置callback时需要修改输出格式和编码
@@ -226,13 +226,13 @@ class HttpResponse
 	 * @param string $template 模板路径
 	 * @param array $userData 模板变量
 	 * @param boolean $output 是否输出
-	 * @throws \Exception lessp.errclass 模板类不存在
+	 * @throws \Exception hapn.errclass 模板类不存在
 	 * @return string
 	 */
 	function buildView($template, $userData, $output = false)
 	{
-		$engine = Conf::get('lessp.view', 'PhpView');
-		$viewRoot = Conf::get('lessp.view.root', PAGE_ROOT);
+		$engine = Conf::get('hapn.view', 'PhpView');
+		$viewRoot = Conf::get('hapn.view.root', PAGE_ROOT);
 		$clsName = $engine;
 		
 		$this->app->timer->begin($engine);
@@ -242,7 +242,7 @@ class HttpResponse
 			require_once $file;
 		}
 		if (!class_exists($clsName)) {
-			throw new \Exception("lessp.errclass view $engine not exist");
+			throw new \Exception("hapn.errclass view $engine not exist");
 		}
 		$view = new $clsName();
 		$view->init(array(
@@ -323,8 +323,8 @@ class HttpResponse
 	 */
 	public function setLesspHeader($errcode='suc')
 	{
-		global $_LessP_appid;
-		$header = sprintf('lessp: id=%s,%s',$this->app->appId,$_LessP_appid);
+		global $_HapN_appid;
+		$header = sprintf('hapn: id=%s,%s',$this->app->appId,$_HapN_appid);
 	
 		if ($errcode != 'suc') {
 			$method = 'r';
@@ -342,7 +342,7 @@ class HttpResponse
 	}
 	
 	/**
-	 * 给lessp返回的结果中额外增加一些变量
+	 * 给hapn返回的结果中额外增加一些变量
 	 * @param string $key
 	 * @param string $value
 	 */
@@ -361,23 +361,23 @@ class HttpResponse
 			}
 			if (!preg_match('/^[a-zA-Z0-9\.\-_]{1,50}$/',$errcode)) {
 				//普通的错误信息不能传到前端
-				$errcode = 'lessp.fatal';
+				$errcode = 'hapn.fatal';
 			}
 			$result = array('err'=>$errcode);
-			if ($errcode == 'lessp.u_input') {
+			if ($errcode == 'hapn.u_input') {
 				//输入check错误时，可以带些数据
 				$result['data'] = $this->outputs;
 				Logger::debug('input data error:%s',print_r($result['data'],true));
 			}
 				
-			if($errcode=="lessp.u_not_modified")
+			if($errcode=="hapn.u_not_modified")
 			{
 				$result['data'] = null;
 			}
 		} elseif ($this->error) {
-			$result = array('err'=>'lessp.fatal');
+			$result = array('err'=>'hapn.fatal');
 		} else {
-			$result = array('err'=>'lessp.ok','data'=>$this->outputs);
+			$result = array('err'=>'hapn.ok','data'=>$this->outputs);
 		}
 		foreach($this->results as $key => $value) {
 			if (!isset($result[$key])) {
@@ -458,7 +458,7 @@ class HttpResponse
 		}
 		
 		if ($data) {
-			$outhandler = Conf::get('lessp.outputhandler',array());
+			$outhandler = Conf::get('hapn.outputhandler',array());
 			if ($outhandler && !is_array($outhandler)) {
 				//也支持配置一个字符串
 				$outhandler = array($outhandler);
