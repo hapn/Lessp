@@ -175,7 +175,7 @@ final class InitFilter
 				$app->request->url = $app->request->rawUri;
 			}
 		} else {
-			Exception::notfound();
+			throw Exception::notfound();
 		}
 		$app->request->url = '/'.ltrim($app->request->url,'/');
 		unset($_GET['route']);

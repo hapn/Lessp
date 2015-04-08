@@ -12,7 +12,8 @@ require_once __DIR__ . '/BaseApp.php';
  * @example
  *
  */
-class WebApp extends BaseApp {
+class WebApp extends BaseApp 
+{
 	public $filterExecutor = null;
 	/**
 	 * Http请求类
@@ -34,7 +35,8 @@ class WebApp extends BaseApp {
 	 */
 	public $isTask = false;
 	
-	function __construct() {
+	function __construct() 
+	{
 		parent::__construct ();
 		$this->mode = APP_MODE_WEB;
 	}
@@ -42,7 +44,8 @@ class WebApp extends BaseApp {
 	/**
 	 * 处理web请求
 	 */
-	function process() {
+	function process() 
+	{
 		if (false === $this->filterExecutor->executeFilter ( 'init' )) {
 			return;
 		}
@@ -64,7 +67,8 @@ class WebApp extends BaseApp {
 	 * (non-PHPdoc)
 	 * @see BaseApp::genAppId()
 	 */
-	function genAppId() {
+	function genAppId() 
+	{
 		if (isset ( $_SERVER ['HTTP_CLIENTAPPID'] )) {
 			return intval ( $_SERVER ['HTTP_CLIENTAPPID'] );
 		}
