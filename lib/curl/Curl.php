@@ -56,7 +56,7 @@ final class Curl
 		CURLOPT_HEADER			=> 1,
 		CURLOPT_FOLLOWLOCATION	=> 3,
 		CURLOPT_ENCODING		=> '',
-		CURLOPT_USERAGENT		=> 'Lessp',
+		CURLOPT_USERAGENT		=> 'HapN Curl',
 		CURLOPT_AUTOREFERER		=> 1,
 		CURLOPT_CONNECTTIMEOUT	=> 2,
 		CURLOPT_TIMEOUT			=> 5,
@@ -67,14 +67,12 @@ final class Curl
 	
 	function __construct($confs = null)
 	{
-		if ($confs === null) {
-			$confs = Conf::get('curl.options', array());
-		}
-	
 		$this->options = self::$defaultOpts;
 	
-		foreach($confs as $key => $value) {
-			$this->options[$key] = $value;
+		if ($confs) {
+			foreach($confs as $key => $value) {
+				$this->options[$key] = $value;
+			}
 		}
 	}
 	
@@ -131,13 +129,44 @@ final class Curl
 	 * @param string $url
 	 * @param array $postData
 	 * @param array $opt
-	 * @param string $buildQuery
+	 * @param boolean $buildQuery
 	 * @return CurlResponse
 	 */
 	function post($url, $postData=array(), $opt=array(), $buildQuery = true)
 	{
 		$opt[CURLOPT_POST] = true;
 		return $this->_doreq($url, $postData, $opt, $buildQuery);
+	}
+	
+	/**
+	 * 上传文件的post请求
+	 * @param string $url
+	 * @param array $postData
+	 * @param array $postFile
+	 * @param array $opt 
+	 * <code>array(
+	 *   $key => array(
+	 * 	   'file' => '', // 文件名
+	 *     'type' => '', // 文件类型
+	 *     'blob' => '', // 二进制数据
+	 *   )
+	 * )
+	 * </code>
+	 * @return string
+	 */
+	function postFile($url, array $postData, array $postFile, $opt = array())
+	{
+		$opt[CURLOPT_POST] = true;
+		if (!empty($postFile)) {
+			foreach($postFile as $key => $data) {
+				if (!is_array($data)) {
+					throw new \Exception('curl.postFileIllegal');
+				}
+				$key = "{$key}\"; filename=\"{$data['name']}\r\nContent-Type: {$data['type']}\r\n";
+				$postData[$key] = $data['blob'];
+			}
+		}
+		return $this->_doreq($url, $postData, $opt, FALSE);
 	}
 	
 	/**

@@ -213,6 +213,7 @@ class WebApp extends BaseApp {
 				} else {
 					$args = array();
 				}
+				ob_clean();
 				$this->response->forward($info['path'], $args);
 				$this->response->send();
 				exit();
