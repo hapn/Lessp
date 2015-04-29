@@ -316,7 +316,7 @@ class WebApp extends BaseApp
 		$basic = array (
 			'ip' => $ip,
 			'uri' => $this->request->rawUri,
-			'logid' => $this->appId . '-' . ( - $this->appId) 
+			'logid' => $this->appId . '-' . ($__HapN_appid  - $this->appId) 
 		);
 		
 		if ($this->request->method != 'GET') {

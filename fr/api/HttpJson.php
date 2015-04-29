@@ -197,7 +197,7 @@ class HttpJson
 			throw new \Exception ( 'api.httpjson encode failed' );
 		}
 		curl_setopt ( $this->curl_handle, CURLOPT_CONNECTTIMEOUT, $this->connTimeout);
-		curl_setopt ( $this->curl_handle, CURLOPT_TIMEOUT, $this->connTimeout+$this->readTimeout + $this->writeTimeout);
+		curl_setopt ( $this->curl_handle, CURLOPT_TIMEOUT, $this->connTimeout + $this->readTimeout + $this->writeTimeout);
 		$this->error ( curl_setopt ( $this->curl_handle, CURLOPT_POSTFIELDS, $json ) );
 		while ( true )
 		{
