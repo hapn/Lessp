@@ -202,6 +202,15 @@ final class ApiApp
 		$this->appId = $this->genAppId();
 		$this->uri = $this->sreq->server['request_uri'];
 		
+		if ($this->get('_if') == 'json') {
+			$raw = $this->sreq->rawContent();
+			$post = @json_decode($raw, true);
+			if ($post === false) {
+				$post = array();
+			}
+			$this->sreq->post = $post;
+		}
+		
 		$this->log('received request');
 		
 		// set_error_handler(array(
@@ -260,9 +269,6 @@ final class ApiApp
 		if ( strpos($uri, '_private/rpc/') === 0 ) {
 			$method = substr($uri, strlen('_private/rpc/'));
 			
-			$raw = $this->sreq->rawContent();
-			$post = json_decode($raw, true);
-			
 			$try = intval($this->get('_try', 1));
 			if ( $try <= 0 ) {
 				$try = 1;
@@ -276,9 +282,8 @@ final class ApiApp
 			if ( ! $mod || ! $method ) {
 				throw new Exception('hapn.errrpccall');
 			}
-			
-			$args = isset($post['rpcinput']) ? $post['rpcinput'] : array();
-			$params = isset($post['rpcinit']) ? $post['rpcinit'] : array();
+			$args = $this->form('rpcinput', array());
+			$params = $this->form('rpcinit', array());
 			
 			// 为了支持多级模块，把:转换成/，因为掉会用时把/当作:传入
 			$mod = str_replace(':', '/', $mod);
@@ -388,6 +393,14 @@ final class ApiApp
 	{
 		if ( isset($this->sreq->get[$key]) ) {
 			return $this->sreq->get[$key];
+		}
+		return $def;
+	}
+	
+	function form ($key, $dev = NULL)
+	{
+		if ( isset($this->sreq->post[$key]) ) {
+			return $this->sreq->post[$key];
 		}
 		return $def;
 	}
