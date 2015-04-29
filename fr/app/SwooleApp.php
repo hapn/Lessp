@@ -75,9 +75,13 @@ class SwooleApp extends WebApp
 					$stop = gettimeofday();
 					$cost = ($stop['sec'] * 1000 + ($stop['usec'] / 1000)) -
 							 ($time['sec'] * 1000 + ($time['usec'] / 1000));
+					$url = $req->server['request_uri'];
+					if ($_GET) {
+						$url .= '?'.http_build_query($_GET);
+					}
 					printf("[%s.%06d]#%d:%d cost:%.3fms %s %s\n", date('Y/m/d H:i:s', $stop['sec']), $stop['usec'], 
 							$index, $app->appId, $cost, $req->server['request_method'], 
-							$req->server['request_uri']);
+							$url);
 				});
 		$http->start();
 	}
