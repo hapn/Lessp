@@ -1,9 +1,9 @@
 <?php
 /**
  *  
- * @filesource        Api.php
+ * @filesource  Api.php
  * @author      ronnie<comdeng@live.com>
- * @since        2014-12-21
+ * @since       2014-12-21
  * @version     1.0
  * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
  * @desc 
@@ -128,12 +128,21 @@ class Api
 	 */
 	private static function getProxyFromConf($mod, $param)
 	{
+		$conf = false;
 		if (!isset(self::$configure[$mod])) {
-			return false;
+			if ( ($pos = strripos($mod, '/')) === FALSE) {
+				return false;
+			}
+			$mMode = substr($mod, 0, $pos + 1).'*';
+			if (!isset(self::$configure[$mMode])) {
+				return false;
+			} 
+			$conf = self::$configure[$mMode];
+		} else {
+			$conf = self::$configure[$mod];
 		}
-		$conf = self::$configure[$mod];
 		if (empty($conf['class'])) {
-			throw new \Exception('Api.errconf mod='.$mod);
+			throw new \Exception('api.errconf mod='.$mod);
 		}
 		$internalmod = $mod;
 		if (!empty($conf['mod'])) {

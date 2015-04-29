@@ -297,8 +297,8 @@ class Response
 	 */
 	public function setLesspHeader($errcode='suc')
 	{
-		global $_HapN_appid;
-		$header = sprintf('hapn: id=%s,%s',$this->app->appId,$_HapN_appid);
+		global $__HapN_appid;
+		$header = sprintf('hapn: id=%s,%s',$this->app->appId,);
 	
 		if ($errcode != 'suc') {
 			$method = 'r';

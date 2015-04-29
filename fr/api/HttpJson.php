@@ -121,15 +121,15 @@ class HttpJson
 		$this->connTimeout = $connTimeout;
 		$this->readTimeout = $readTimeout;
 		$this->writeTimeout = $writeTimeout;
-		$this->arrHeader = array ();
+		$this->arrHeader = array();
 		$this->encoding = $encoding;
 	}
 	
 	protected function getLogid()
 	{
-		global $_HapN_appid;
-		$logid = $_HapN_appid;
-		$_HapN_appid ++;
+		global $__HapN_appid;
+		$logid = $__HapN_appid;
+		$__HapN_appid ++;
 		return $logid;
 	}
 	
@@ -138,10 +138,14 @@ class HttpJson
 	 */
 	protected function buildUrlArray($url)
 	{
-		foreach ( $this->arrServer as $server )	{
-			$completeUrl = sprintf ( 'http://%s/%s', $server, $url );
-			$this->arrUrl [$completeUrl] = true;
-		}
+	 	$url = ltrim($url, '/');
+        foreach ( $this->arrServer as $server ) { 
+            if (!is_array($server)) {
+                $server = array($server, true);
+            }   
+            $completeUrl = sprintf ( 'http://%s/%s', $server[0], $url );
+            $this->arrUrl [$completeUrl] = $server[1];
+        }
 	}
 	
 	/**
@@ -151,14 +155,20 @@ class HttpJson
 	protected function pickOneUrl()
 	{
 	
-		$arrUrl = array_keys ( $this->arrUrl, true );
-		if (count($arrUrl) == 0)
-		{
-			return false;
-		}
-		$url = $arrUrl [mt_rand ( 0, count( $arrUrl ) - 1 )];
-		$this->arrUrl [$url] = false;
-		return $url;
+		$arrUrl = array();
+        foreach($this->arrUrl as $host => $name) {
+            if ($name) {
+                $arrUrl[] = array($host, $name);
+            }
+        }
+
+        if (count($arrUrl) == 0)
+        {
+            return false;
+        }
+        $url = $arrUrl [mt_rand ( 0, count( $arrUrl ) - 1 )];
+        $this->arrUrl [$url[0]] = false;
+        return $url;
 	}
 	
 	/**
@@ -184,7 +194,7 @@ class HttpJson
 		$json = json_encode ( $arr_data, JSON_UNESCAPED_UNICODE );
 		if (empty ( $json ))
 		{
-			throw new \Exception ( 'Api.httpjson encode failed' );
+			throw new \Exception ( 'api.httpjson encode failed' );
 		}
 		curl_setopt ( $this->curl_handle, CURLOPT_CONNECTTIMEOUT, $this->connTimeout);
 		curl_setopt ( $this->curl_handle, CURLOPT_TIMEOUT, $this->connTimeout+$this->readTimeout + $this->writeTimeout);
@@ -194,10 +204,13 @@ class HttpJson
 			$url = $this->pickOneUrl ();
 			if (false === $url)
 			{
-				throw new \Exception ( 'Api.httpjson call all url failed' );
+				throw new \Exception ( 'api.httpjson call all url failed' );
 			}
 				
-			curl_setopt ( $this->curl_handle, CURLOPT_URL, $url );
+			curl_setopt ( $this->curl_handle, CURLOPT_URL, $url[0] );
+			if ($url[1] !== true) {
+				curl_setopt ( $this->curl_handle, CURLOPT_HTTPHEADER, array('Host: '.$url[1]) );
+			}
 			if (false === curl_exec ( $this->curl_handle ))
 			{
 				continue;
@@ -225,7 +238,7 @@ class HttpJson
 	protected function convertEncoding($arr_data, $from, $to, $step=1)
 	{
 		if ($step > self::MAX_STEP) {
-			throw new \Exception('Api.recursion');
+			throw new \Exception('api.recursion');
 		}
 		if (is_string ( $arr_data ))
 		{
@@ -293,7 +306,7 @@ class HttpJson
 		$arrRet = json_decode ( $this->rawResponseBody, true );
 		if (false === $arrRet)
 		{
-			throw new \Exception ( "Api.httpjson json_decode:$this->rawResponseBody failed" );
+			throw new \Exception ( "api.httpjson json_decode:$this->rawResponseBody failed" );
 		}
 		if ($this->encoding !== 'UTF-8')
 		{
@@ -337,7 +350,7 @@ class HttpJson
 			if (0 !== $errno)
 			{
 				$error = curl_error ( $this->curl_handle );
-				throw new \Exception ( "Api.httpjson curl_error:$error" );
+				throw new \Exception ( "api.httpjson curl_error:$error" );
 			}
 		}
 	}

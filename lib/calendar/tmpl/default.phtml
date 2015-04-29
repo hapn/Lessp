@@ -7,7 +7,7 @@
 	.table tr td.bg-danger{background-color:#FFA;}
 </style>
 
-<div class="_lessp_calendar_container">
+<div class="_hapn_calendar_container">
 <?php endif?>
 	<div class="row" style="margin-bottom:20px">
 		<div class="col-md-2"></div>
@@ -122,7 +122,7 @@
 
 <script>
 	!function($){
-		var container = $('._lessp_calendar_container');
+		var container = $('._hapn_calendar_container');
 		container.delegate('td', 'click', function(){
 			if (!confs.selectable) {
 				return;
@@ -154,8 +154,8 @@
 		});
 		
 		var confs = {}, defaults = {selectable:true,markSelect:false};
-		window.lessp = window.lessp || {};
-		window.lessp.calendar = {
+		window.hapn = window.hapn || {};
+		window.hapn.calendar = {
 			init:function(options){
 				$.extend(confs, defaults);
 				$.extend(confs, options);

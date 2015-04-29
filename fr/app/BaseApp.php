@@ -130,8 +130,8 @@ abstract class BaseApp
 		require_once FR_ROOT.'conf/Conf.php';
 		
 		$this->appId = $this->genAppId();
-		global $_HapN_appid;
-		$_HapN_appid = $this->appId;
+		global $__HapN_appid;
+		$__HapN_appid = $this->appId;
 	
 		$this->_initConf();
 		$this->_initEnv();
@@ -242,15 +242,15 @@ abstract class BaseApp
 	 */
 	function _initApi()
 	{
-		$servers = Conf::get('Api.servers', array());
+		$servers = Conf::get('api.servers', array());
 		if ($this->debug) {
 			foreach($servers as $key=>$server) {
 				//如果调试模式
 				$servers[$key]['curlopt'][CURLOPT_VERBOSE] = true;
 			}
 		}
-		$modmap = Conf::get('Api.mod', array());
-		$autogen = Conf::get('Api.autodsl_root', array());
+		$modmap = Conf::get('api.mod', array());
+		$autogen = Conf::get('api.autodsl_root', array());
 		
 		require_once FR_ROOT.'api/Api.php';
 		Api::init(
@@ -264,7 +264,7 @@ abstract class BaseApp
 				'conf_root'		=> CONF_ROOT.'api/',
 			)
 		);
-		$intercepterclasses = Conf::get('Api.intercepters', array());
+		$intercepterclasses = Conf::get('api.intercepters', array());
 		$intercepters = array();
 		foreach($intercepterclasses as $class) {
 			require_once PLUGIN_ROOT.'intercepters/'.$class.'.php';

@@ -214,7 +214,7 @@ class HttpResponse
 			$this->setHeader('HTTP/1.1 301 Moved Permanently');
 		}
 		$this->setHeader('Location: '.$url);
-		$this->setLesspHeader();
+		$this->setHapNHeader();
 		$this->sendHeaders();
 		//设置正常结束状态
 		$this->app->endStatus = 'ok';
@@ -321,10 +321,10 @@ class HttpResponse
 	 * 请求的id设置到response header里
 	 * @param string $errcode
 	 */
-	public function setLesspHeader($errcode='suc')
+	public function setHapNHeader($errcode='suc')
 	{
-		global $_HapN_appid;
-		$header = sprintf('hapn: id=%s,%s',$this->app->appId,$_HapN_appid);
+		global $__HapN_appid;
+		$header = sprintf('hapn: id=%s,%s',$this->app->appId, $__HapN_appid);
 	
 		if ($errcode != 'suc') {
 			$method = 'r';
@@ -346,7 +346,7 @@ class HttpResponse
 	 * @param string $key
 	 * @param string $value
 	 */
-	public function setLesspResult($key, $value)
+	public function setHapNResult($key, $value)
 	{
 		if (!$key) return;
 		$this->results[$key] = $value;
@@ -444,7 +444,7 @@ class HttpResponse
 		if ($inner) {
 			$data = $this->_formatResponse();
 		} else {
-			$this->setLesspHeader();
+			$this->setHapNHeader();
 			$data = $this->_formatResponse();
 			$this->sendHeaders();
 			

@@ -289,7 +289,7 @@ class WebApp extends BaseApp
 				exit ();
 			}
 		}
-		$this->response->setLesspHeader ( $errcode );
+		$this->response->setHapNHeader ( $errcode );
 		
 		$this->_setHeader($errcode);
 		
@@ -308,7 +308,7 @@ class WebApp extends BaseApp
 	 */
 	function shutdownHandler() {
 		$this->filterExecutor->executeFilter ( 'clean' );
-		global $_HapN_appid;
+		global $__HapN_appid;
 		
 		$r = $this->request;
 		$ip = ($r->userip === $r->clientip) ? $r->userip : ($r->userip . '-' . $r->clientip);
@@ -316,7 +316,7 @@ class WebApp extends BaseApp
 		$basic = array (
 			'ip' => $ip,
 			'uri' => $this->request->rawUri,
-			'logid' => $this->appId . '-' . ($_HapN_appid - $this->appId) 
+			'logid' => $this->appId . '-' . ( - $this->appId) 
 		);
 		
 		if ($this->request->method != 'GET') {

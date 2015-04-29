@@ -1,36 +1,58 @@
 <?php
+/***************************************************************************
+ * 
+ * Copyright (c) 2010 , Inc. All Rights Reserved
+ * $Id$:index.php,2010/05/07 13:49:09 
+ * 
+ **************************************************************************/
+ 
+ 
+ 
 /**
+ * @file index.php
+ * @author huqingping
+ * @date 2010/05/07 13:49:09
+ * @version 1.0 
+ * @brief 
  *  
- * @filesource  index.php
- * @author      ronnie<comdeng@live.com>
- * @since       2014-12-21
- * @version     1.0
- * @copyright   Copyright (C) cc.hapn 2014 All rights reserved.
- * @desc  启动文件
- * @example     
- */
+ **/
 
-define('SITE_ROOT', dirname(__DIR__));
+if (isset($argv)) {
+	$opts = getopt('', array('api'));
+	if (isset($opts['api'])) {
+		define('APP_MODE', 'api');
+	} else {
+		define('APP_MODE', 'tool');
+	}
+} else {
+	define('APP_MODE', 'web');
+}
 
-// 核心框架所在目录
-define('FR_ROOT', SITE_ROOT.'/fr/');
-// lib所在目录
-define('LIB_ROOT', SITE_ROOT.'/lib/');
-// page所在目录
-define('PAGE_ROOT', SITE_ROOT.'/page/');
-// api所在目录
-define('API_ROOT', SITE_ROOT.'/api/');
-// filter所在目录
-define('PLUGIN_ROOT', SITE_ROOT.'/plugin/');
-// exlib所在目录
-define('EXLIB_ROOT', SITE_ROOT.'/exlib/');
-// 日志所在目录
-define('LOG_ROOT', SITE_ROOT.'/log/');
-// 临时文件所在目录
-define('TMP_ROOT', SITE_ROOT.'/tmp/');
-// 配置文件所在目录
-define('CONF_ROOT', SITE_ROOT.'/conf/');
+define('_ROOT', dirname(__DIR__));
+$modeRoot = _ROOT.'/mode/'.APP_MODE.'/';
+define('FR_ROOT',_ROOT.'/Lessp/fr/');
+define('RUN_ROOT',_ROOT.'/runroot/');
+define('LIB_ROOT',_ROOT.'/Lessp/lib/');
+define('PLUGIN_ROOT',_ROOT.'/plugin/');
+define('LOG_ROOT',	$modeRoot.'log/');
+define('CONF_ROOT',	_ROOT.'/conf/');
+define('TMP_ROOT',	$modeRoot.'tmp/');
+define('EXLIB_ROOT',_ROOT.'/exlib/');
+define('PAGE_ROOT',_ROOT.'/page/');
+define('TOOL_ROOT',_ROOT.'/tool/');
+define('API_ROOT',_ROOT.'/api/');
 
-require_once FR_ROOT.'app/WebApp.php';
-$app = new WebApp();
-$app->run();
+switch(APP_MODE) {
+	case 'web':
+		require_once FR_ROOT.'app/WebApp.php';
+		(new WebApp())->run();
+		break;
+	case 'tool':
+		require_once FR_ROOT.'app/ToolApp.php';
+		(new ToolApp())->run();
+		break;
+	case 'api':
+		require_once FR_ROOT.'app/ApiApp.php';
+		ApiApp::bootstrap();
+		break;
+}
