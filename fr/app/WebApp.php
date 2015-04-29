@@ -245,7 +245,7 @@ class WebApp extends BaseApp
 		}
 		$errcode = 'hapn.fatal';
 		$this->endStatus = $errcode;
-		$this->response->setLesspHeader ( $errcode );
+		$this->response->setHapNHeader ( $errcode );
 		
 		$this->_setHeader( $errcode );
 		if ($this->request->needErrorPage ()) {

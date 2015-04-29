@@ -202,6 +202,7 @@ class HttpJson
 		while ( true )
 		{
 			$url = $this->pickOneUrl ();
+			Logger::trace('api.fetchurl url='.$url);
 			if (false === $url)
 			{
 				throw new \Exception ( 'api.httpjson call all url failed' );

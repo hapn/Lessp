@@ -43,12 +43,6 @@ class UrlDispatcher
 	private static $lastApp;
 	
 	
-	/**
-	 * 
-	 * @var LesspException
-	 */
-	private $_ex;
-	
 	private $mode;
 
 	/**
@@ -58,15 +52,14 @@ class UrlDispatcher
 	 */
 	function __construct($app, $mode = DISPATCH_MODE_NORMAL) 
 	{
-		$this->_ex = new Exception(__CLASS__, EXCEPTION_TYPE_SYSTEM);
 		if ($app === NULL) {
 			if (!self::$lastApp) {
-				$this->_ex->newthrow('app_required');
+				throw new Exception('urldispatcher.app_required');
 			}
 			$this->app = self::$lastApp;
 		} else {
 			if (!($app instanceof WebApp)) {
-				$this->_ex->newthrow('app_must_be_WebApp');
+				throw new Exception('urldispatcher.app_must_be_WebApp');
 			}
 			self::$lastApp = $this->app = $app;
 		}

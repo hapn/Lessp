@@ -499,6 +499,7 @@ class HttpResponse
 	 */
 	function forward($url, $args = array())
 	{
+		require_once FR_ROOT.'/http/UrlDispatcher.php';
 		$dispatcher = new UrlDispatcher(NULL, DISPATCH_MODE_FORWARD);
 		return $dispatcher->dispatch($url, $args);
 	}

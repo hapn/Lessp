@@ -40,6 +40,7 @@ final class ApiApp
 	var $outputs = array();
 	
 	static $processName;
+	static $workers;
 
 	/**
 	 * 启动
@@ -126,6 +127,7 @@ final class ApiApp
 		} else {
 			swoole_set_process_name(self::$processName.': worker');
 		}
+		self::$workers[$worker_id] = $serv->worker_pid;
 		printf("master_id: %d,manager_pid=%d,worker_id=%d,worker_pid=%d\n", $serv->master_pid, $serv->manager_pid, 
 				$serv->worker_id, $serv->worker_pid);
 	}
@@ -383,8 +385,10 @@ final class ApiApp
 	function log ( $msg )
 	{
 		$time = gettimeofday();
-		$msg = sprintf('[%s.%06d][pid:%d][appid:%d][%s %s] %s', date('Y/m/d H:i:s', $time['sec']), $time['usec'], 
-				posix_getpid(), $this->appId, $this->sreq->server['request_method'], $this->sreq->server['request_uri'], 
+		$pid = posix_getpid();
+		$index = array_search($pid, self::$workers);
+		$msg = sprintf('[%s.%06d][#%d:%d][appid:%d][%s %s] %s', date('Y/m/d H:i:s', $time['sec']), $time['usec'], 
+				$index, $pid, $this->appId, $this->sreq->server['request_method'], $this->sreq->server['request_uri'], 
 				$msg);
 		echo $msg . "\n";
 	}
@@ -397,7 +401,7 @@ final class ApiApp
 		return $def;
 	}
 	
-	function form ($key, $dev = NULL)
+	function form ($key, $def = NULL)
 	{
 		if ( isset($this->sreq->post[$key]) ) {
 			return $this->sreq->post[$key];
