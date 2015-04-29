@@ -9,7 +9,7 @@ const CALENDAR_MONTH_CURRENT = 0;
 // 下个月
 const CALENDAR_MONTH_NEXT = 1;
 
-require __DIR__.'/Lunar.php';
+require_once __DIR__.'/Lunar.php';
 /**
  *
  * @copyright 	Copyright (C) Jiehun.com.cn 2014 All rights reserved.

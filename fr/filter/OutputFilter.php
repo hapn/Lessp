@@ -27,12 +27,14 @@ final class OutputFilter implements IFilter
 		}
 		$app->response->send();
 	
-		$enableTask = Conf::get('hapn.task_enable', true);
-		if ($enableTask) {
-			// 将后续请求转入后台处理
-			fastcgi_finish_request();
-			$app->isTask = true;
-			ini_set('max_execution_time', intval(Conf::get('hapn.task_timeout', 60 * 10)));
+		if (function_exists('fastcgi_finish_request')) {
+			$enableTask = Conf::get('hapn.task_enable', true);
+			if ($enableTask) {
+				// 将后续请求转入后台处理
+				fastcgi_finish_request();
+				$app->isTask = true;
+				ini_set('max_execution_time', intval(Conf::get('hapn.task_timeout', 60 * 10)));
+			}
 		}
 		
 		// 如果有定义的需要在后台处理的内容，则在此处理

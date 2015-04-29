@@ -184,6 +184,12 @@ final class ApiApp
 
 	function run ( )
 	{
+		$this->now = $this->sreq->server['request_time'];
+		$this->appId = $this->genAppId();
+		$this->uri = $this->sreq->server['request_uri'];
+		
+		$this->log('received request');
+		
 		$this->timer->begin('total', 'init');
 		$this->init();
 		$this->timer->end('init');
@@ -196,13 +202,16 @@ final class ApiApp
 		}
 		
 		$this->end();
+// 		$this->sres->end(json_encode(array(
+// 			'err' => 'hapn.ok',
+// 			'data' => array(
+// 				'rpcret' => array(),
+// 			),
+// 		)));
 	}
 
 	function init ( )
 	{
-		$this->now = $this->sreq->server['request_time'];
-		$this->appId = $this->genAppId();
-		$this->uri = $this->sreq->server['request_uri'];
 		
 		if ($this->get('_if') == 'json') {
 			$raw = $this->sreq->rawContent();
@@ -212,8 +221,6 @@ final class ApiApp
 			}
 			$this->sreq->post = $post;
 		}
-		
-		$this->log('received request');
 		
 		// set_error_handler(array(
 		// $this,
@@ -365,13 +372,14 @@ final class ApiApp
 	 */
 	function genAppId ( )
 	{
-		$server = $this->sreq->server;
-		if ( isset($server['clientappid']) ) {
-			return intval($server['clientappid']);
+		$header = $this->sreq->header;
+		if ( isset($header['clientappid']) ) {
+			return intval($header['clientappid']);
 		}
+		$server = $this->sreq->server;
 		$reqip = '127.0.0.1';
-		if ( isset($server['http_clientip']) ) {
-			$reqip = $server['http_clientip'];
+		if ( isset($server['clientip']) ) {
+			$reqip = $server['clientip'];
 		} elseif ( isset($server['remote_addr']) ) {
 			$reqip = $server['remote_addr'];
 		}

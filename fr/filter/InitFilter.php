@@ -133,7 +133,7 @@ final class InitFilter
 	
 	private function _parseParams(WebApp $app)
 	{
-		$arr = array_merge($_GET,$_POST);
+		$arr = array_merge($_GET, $_POST);
 		if (count($arr) != count($_GET) + count($_POST)) {
 			//有某些变量被覆盖了
 			//打一个日志警告下
@@ -144,7 +144,11 @@ final class InitFilter
 			//系统参数都删除
 			unset($arr[$key]);
 		}
-		$puts = file_get_contents('php://input');
+		if ($app->mode == 'swoole') {
+			$puts = $GLOBALS['SWOOLE_REQUEST']->rawContent();
+		} else {
+			$puts = file_get_contents('php://input');
+		}
 		if ($puts) {
 			if ('json' === $app->request->if) {
 				$json = json_decode($puts, true);

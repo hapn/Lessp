@@ -98,7 +98,7 @@ class WebApp extends BaseApp
 	/**
 	 * 初始化web对象
 	 */
-	private function _initWebObject() {
+	protected function _initWebObject() {
 		require_once FR_ROOT . 'http/HttpRequest.php';
 		require_once FR_ROOT . 'http/HttpResponse.php';
 		require_once FR_ROOT . 'filter/FilterExecutor.php';

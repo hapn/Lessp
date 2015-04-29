@@ -52,7 +52,7 @@ switch(APP_MODE) {
 		(new ToolApp())->run();
 		break;
 	case 'api':
-		require_once FR_ROOT.'app/ApiApp.php';
-		ApiApp::bootstrap();
+		require_once FR_ROOT.'app/SwooleApp.php';
+		SwooleApp::bootstrap();
 		break;
 }

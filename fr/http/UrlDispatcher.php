@@ -196,7 +196,7 @@ class UrlDispatcher
 				
 				break;
 			case 'post':
-				if ($func{0} != '_') {
+				if (!$this->app->request->isPrivate && $func{0} != '_') {
 					throw LesspException::notfound();
 				}
 			case 'put':
@@ -219,7 +219,7 @@ class UrlDispatcher
 		
 		$mainMethod = $this->_loadMethod($controller, $funcs, $args);
 		if (!$mainMethod) {
-			if ($func != 'index' && $method == 'GET') {
+			if ($func != 'index') {
 				//$args[] = $func;
 				array_unshift($args, $func);
 				$mainMethod = $this->_loadMethod($controller, 'index', $args);
