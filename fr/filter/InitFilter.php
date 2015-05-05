@@ -145,7 +145,7 @@ final class InitFilter
 			unset($arr[$key]);
 		}
 		if ($app->mode == 'swoole') {
-			$puts = $GLOBALS['SWOOLE_REQUEST']->rawContent();
+			$puts = $app->swooleRequest->rawContent();
 		} else {
 			$puts = file_get_contents('php://input');
 		}

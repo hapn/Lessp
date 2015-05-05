@@ -13,7 +13,7 @@
 
 class HttpResponse
 {
-	private $app = null;
+	protected $app = null;
 	
 	var $template = null;
 	var $exception = null;

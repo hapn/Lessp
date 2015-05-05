@@ -147,7 +147,7 @@ class WebApp extends BaseApp
 		$this->filterExecutor->loadFilters ( $filters );
 	}
 	
-	private function _setHeader($errcode)
+	protected function _setHeader($errcode)
 	{
 		switch($errcode) {
 			case MSG_NOT_FOUND:

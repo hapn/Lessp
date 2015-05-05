@@ -219,7 +219,7 @@ class HttpJson
 			else
 			{
 				$httpCode = curl_getinfo ( $this->curl_handle, CURLINFO_HTTP_CODE );
-				if (200 == $httpCode)
+				if (200 == $httpCode || 401 == $httpCode)
 				{
 					return;
 				}

@@ -19,7 +19,7 @@ class SwooleResponse extends HttpResponse
 	function sendHeaders()
 	{
 		$headers = $this->headers;
-		$res = $GLOBALS['SWOOLE_RESPONSE'];
+		$res = $this->app->swooleResponse;
 		if ($this->cookies) {
 			//echo cookie
 			foreach($this->cookies as $cookie) {
@@ -50,6 +50,10 @@ class SwooleResponse extends HttpResponse
 		if (!is_string($ret)) {
 			$ret = $ret . '';
 		}
-		$GLOBALS['SWOOLE_RESPONSE']->write($ret);
+		if ($inner) {
+			return $ret;
+		} else {
+			$this->app->swooleResponse->write($ret);
+		}
 	}
 }
