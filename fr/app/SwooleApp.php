@@ -127,7 +127,6 @@ class SwooleApp extends WebApp
 	 */
 	function shutdownHandler ( )
 	{
-		print_r('shutdown:'.time());
 		$error = error_get_last();
 		if ( $error ) {
 			$errmsg = sprintf('caught error, errno:%d,errmsg:%s,file:%s,line:%d', $error['type'], $error['message'], 
