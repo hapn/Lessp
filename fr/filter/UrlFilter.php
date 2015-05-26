@@ -15,7 +15,7 @@ final class UrlFilter implements IFilter
 {
 	function execute(WebApp $app)
 	{
-		$url = strtolower($app->request->url);
+		$url = $app->request->url;
 		
 		require_once FR_ROOT.'http/UrlDispatcher.php';
 		$dispatcher = new UrlDispatcher($app);
